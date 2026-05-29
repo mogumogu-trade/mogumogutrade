@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		72F5A1B72FC9B1E8009DAA61 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = 72F5A1B62FC9B1E8009DAA61 /* Dependencies */; };
+		72F5A1B92FC9B1E8009DAA61 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = 72F5A1B82FC9B1E8009DAA61 /* DependenciesMacros */; };
+		72F5A1BB2FC9B1E8009DAA61 /* DependenciesTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 72F5A1BA2FC9B1E8009DAA61 /* DependenciesTestSupport */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		7281B0DA2FC0966D00A6DF4C /* mogumogu-trade.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "mogumogu-trade.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +29,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				72F5A1B92FC9B1E8009DAA61 /* DependenciesMacros in Frameworks */,
+				72F5A1B72FC9B1E8009DAA61 /* Dependencies in Frameworks */,
+				72F5A1BB2FC9B1E8009DAA61 /* DependenciesTestSupport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +74,9 @@
 			);
 			name = "mogumogu-trade";
 			packageProductDependencies = (
+				72F5A1B62FC9B1E8009DAA61 /* Dependencies */,
+				72F5A1B82FC9B1E8009DAA61 /* DependenciesMacros */,
+				72F5A1BA2FC9B1E8009DAA61 /* DependenciesTestSupport */,
 			);
 			productName = "mogumogu-trade";
 			productReference = 7281B0DA2FC0966D00A6DF4C /* mogumogu-trade.app */;
@@ -94,6 +106,9 @@
 			);
 			mainGroup = 7281B0D12FC0966D00A6DF4C;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				72F5A1B52FC9B1E8009DAA61 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7281B0DB2FC0966D00A6DF4C /* Products */;
 			projectDirPath = "";
@@ -332,6 +347,35 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		72F5A1B52FC9B1E8009DAA61 /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.12.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		72F5A1B62FC9B1E8009DAA61 /* Dependencies */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 72F5A1B52FC9B1E8009DAA61 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = Dependencies;
+		};
+		72F5A1B82FC9B1E8009DAA61 /* DependenciesMacros */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 72F5A1B52FC9B1E8009DAA61 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = DependenciesMacros;
+		};
+		72F5A1BA2FC9B1E8009DAA61 /* DependenciesTestSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 72F5A1B52FC9B1E8009DAA61 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = DependenciesTestSupport;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7281B0D22FC0966D00A6DF4C /* Project object */;
 }
