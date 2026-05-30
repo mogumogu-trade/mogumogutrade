@@ -6,12 +6,21 @@ struct ConfettiPieceView: View {
     
     let colors: [Color] = [.yellow, .pink, .blue, .green, .orange, .purple, .cyan]
     
+    // 💡 bodyの外側で計算するように直したよ！
+    var randomX: CGFloat {
+        CGFloat(sin(Double(index) * 45.0) * 160.0)
+    }
+    
+    var randomY: CGFloat {
+        CGFloat(cos(Double(index) * 30.0) * 300.0) - (animate ? 50 : 0)
+    }
+    
+    var randomRotation: Double {
+        Double(index * 25)
+    }
+    
     var body: some View {
-        let randomX = CGFloat(sin(Double(index) * 45.0) * 160.0)
-        let randomY = CGFloat(cos(Double(index) * 30.0) * 300.0) - (animate ? 50 : 0)
-        let randomRotation = Double(index * 25)
-        
-        return Group {
+        Group {
             if index % 2 == 0 {
                 Rectangle()
                     .fill(colors[index % colors.count])

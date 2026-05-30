@@ -1,5 +1,6 @@
 import SwiftUI
 import CoreImage.CIFilterBuiltins
+import Combine
 
 class QRCheckViewModel: ObservableObject {
     @Published var selectedTab = 1
