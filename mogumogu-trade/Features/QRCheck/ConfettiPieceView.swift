@@ -6,7 +6,6 @@ struct ConfettiPieceView: View {
     
     let colors: [Color] = [.yellow, .pink, .blue, .green, .orange, .purple, .cyan]
     
-    // 💡 bodyの外側で計算するように直したよ！
     var randomX: CGFloat {
         CGFloat(sin(Double(index) * 45.0) * 160.0)
     }

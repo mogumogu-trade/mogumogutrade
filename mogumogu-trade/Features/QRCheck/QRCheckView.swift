@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct QRCheckView: View {
-    // 動きやデータは全部この ViewModel に任せる
     @StateObject private var viewModel = QRCheckViewModel()
 
     var body: some View {
@@ -57,15 +56,6 @@ struct QRCheckView: View {
                                 RoundedRectangle(cornerRadius: 16)
                                     .stroke(Color(customHex: "4ECDC4"), lineWidth: 4)
                                     .frame(width: 200, height: 200)
-                                
-                                // お祝い画面が出ていないときだけレーザー線を出す
-                                if !viewModel.isShowingCelebration {
-                                    Rectangle()
-                                        .fill(LinearGradient(colors: [.clear, Color(customHex: "4ECDC4"), .clear], startPoint: .top, endPoint: .bottom))
-                                        .frame(width: 190, height: 4)
-                                        .offset(y: viewModel.laserOffset)
-                                        .animation(.linear(duration: 1.5).repeatForever(autoreverses: true), value: viewModel.laserOffset)
-                                }
                                 
                                 Text("ここにQRをあわせてね")
                                     .foregroundColor(.white)
