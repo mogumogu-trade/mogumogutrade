@@ -32,6 +32,21 @@ struct HomeView: View {
                             .foregroundStyle(.white)
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
+
+                    // せんせい用導線（暫定）。将来は先生モードのゲート配下へ移す。
+                    NavigationLink {
+                        AllergyRegistrationView(
+                            viewModel: AllergyRegistrationViewModel(classId: viewModel.profile.classId)
+                        )
+                    } label: {
+                        Label("せんせい：アレルギーとうろく", systemImage: "cross.case.fill")
+                            .font(.system(size: 16, weight: .bold, design: .rounded))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(Color(red: 0.85, green: 0.35, blue: 0.30))
+                            .foregroundStyle(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                    }
                 }
                 .padding(24)
             }
