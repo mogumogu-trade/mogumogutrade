@@ -7,30 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		460ADDCD2FCA87140058D462 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 460ADDCC2FCA87140058D462 /* FirebaseFirestore */; };
-		460ADDCF2FCA871F0058D462 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 460ADDCE2FCA871F0058D462 /* FirebaseCore */; };
+		72F5A1B72FC9B1E8009DAA61 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = 72F5A1B62FC9B1E8009DAA61 /* Dependencies */; };
+		72F5A1B92FC9B1E8009DAA61 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = 72F5A1B82FC9B1E8009DAA61 /* DependenciesMacros */; };
+		FB00000000000000000000A3 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = FB00000000000000000000A2 /* FirebaseCore */; };
+		FB00000000000000000000A5 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = FB00000000000000000000A4 /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		7281B0DA2FC0966D00A6DF4C /* mogumogu-trade.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "mogumogu-trade.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		460ADDD12FCA8AFE0058D462 /* Exceptions for "mogumogu-trade" folder in "mogumogu-trade" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Info.plist,
-			);
-			target = 7281B0D92FC0966D00A6DF4C /* mogumogu-trade */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		7281B0DC2FC0966D00A6DF4C /* mogumogu-trade */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				460ADDD12FCA8AFE0058D462 /* Exceptions for "mogumogu-trade" folder in "mogumogu-trade" target */,
-			);
 			path = "mogumogu-trade";
 			sourceTree = "<group>";
 		};
@@ -41,8 +30,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				460ADDCF2FCA871F0058D462 /* FirebaseCore in Frameworks */,
-				460ADDCD2FCA87140058D462 /* FirebaseFirestore in Frameworks */,
+				72F5A1B92FC9B1E8009DAA61 /* DependenciesMacros in Frameworks */,
+				72F5A1B72FC9B1E8009DAA61 /* Dependencies in Frameworks */,
+				FB00000000000000000000A3 /* FirebaseCore in Frameworks */,
+				FB00000000000000000000A5 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,8 +84,10 @@
 			);
 			name = "mogumogu-trade";
 			packageProductDependencies = (
-				460ADDCC2FCA87140058D462 /* FirebaseFirestore */,
-				460ADDCE2FCA871F0058D462 /* FirebaseCore */,
+				72F5A1B62FC9B1E8009DAA61 /* Dependencies */,
+				72F5A1B82FC9B1E8009DAA61 /* DependenciesMacros */,
+				FB00000000000000000000A2 /* FirebaseCore */,
+				FB00000000000000000000A4 /* FirebaseFirestore */,
 			);
 			productName = "mogumogu-trade";
 			productReference = 7281B0DA2FC0966D00A6DF4C /* mogumogu-trade.app */;
@@ -125,7 +118,8 @@
 			mainGroup = 7281B0D12FC0966D00A6DF4C;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				460ADDCA2FCA86500058D462 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				72F5A1B52FC9B1E8009DAA61 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
+				FB00000000000000000000A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7281B0DB2FC0966D00A6DF4C /* Products */;
@@ -289,14 +283,14 @@
 				DEVELOPMENT_TEAM = W55XS33Y2P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "mogumogu-trade/Info.plist";
+				INFOPLIST_FILE = "";
 				INFOPLIST_KEY_NSCameraUsageDescription = "給食の完食QRコードを読み取るためにカメラを使用します。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -324,14 +318,14 @@
 				DEVELOPMENT_TEAM = W55XS33Y2P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "mogumogu-trade/Info.plist";
+				INFOPLIST_FILE = "";
 				INFOPLIST_KEY_NSCameraUsageDescription = "給食の完食QRコードを読み取るためにカメラを使用します。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -373,26 +367,44 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		460ADDCA2FCA86500058D462 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		72F5A1B52FC9B1E8009DAA61 /* XCRemoteSwiftPackageReference "swift-dependencies" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-dependencies";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.12.0;
+			};
+		};
+		FB00000000000000000000A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 12.14.0;
+				minimumVersion = 11.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		460ADDCC2FCA87140058D462 /* FirebaseFirestore */ = {
+		72F5A1B62FC9B1E8009DAA61 /* Dependencies */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 460ADDCA2FCA86500058D462 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseFirestore;
+			package = 72F5A1B52FC9B1E8009DAA61 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = Dependencies;
 		};
-		460ADDCE2FCA871F0058D462 /* FirebaseCore */ = {
+		72F5A1B82FC9B1E8009DAA61 /* DependenciesMacros */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 460ADDCA2FCA86500058D462 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			package = 72F5A1B52FC9B1E8009DAA61 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
+			productName = DependenciesMacros;
+		};
+		FB00000000000000000000A2 /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FB00000000000000000000A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCore;
+		};
+		FB00000000000000000000A4 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FB00000000000000000000A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
