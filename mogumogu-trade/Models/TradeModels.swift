@@ -58,6 +58,10 @@ struct TradeCondition: Identifiable, Hashable, Sendable {
     static func options(for category: TradeConditionCategory) -> [TradeCondition] {
         all.filter { $0.category == category }
     }
+
+    static func find(id: String) -> TradeCondition? {
+        all.first { $0.id == id }
+    }
 }
 
 struct StudentSummary: Identifiable, Hashable, Sendable {
@@ -85,10 +89,13 @@ enum TradeOfferStatus: String, Sendable {
 
 struct TradeOffer: Identifiable, Hashable, Sendable {
     let id: String
+    let mealDate: String
     let seller: StudentSummary
     let offering: TradeCondition
     let requesting: TradeCondition
     var status: TradeOfferStatus
+    var matchedOfferId: String?
+    var matchedAt: Date?
 }
 
 struct TradeMatch: Identifiable, Hashable, Sendable {

@@ -58,20 +58,34 @@ struct TradeView: View {
             )
 
             Button {
-                viewModel.submitOffer()
+                Task { await viewModel.submitOffer() }
             } label: {
-                Label("この条件で出品する", systemImage: "arrow.left.arrow.right.circle.fill")
-                    .font(.system(size: 18, weight: .black, design: .rounded))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-                    .background(viewModel.canSubmit ? Color(red: 0.18, green: 0.18, blue: 0.18) : Color.gray)
-                    .foregroundStyle(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                HStack {
+                    if viewModel.isSubmitting {
+                        ProgressView()
+                            .tint(.white)
+                    } else {
+                        Image(systemName: "arrow.left.arrow.right.circle.fill")
+                    }
+                    Text(viewModel.isSubmitting ? "出品しているよ…" : "この条件で出品する")
+                }
+                .font(.system(size: 18, weight: .black, design: .rounded))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 14)
+                .background(viewModel.canSubmit && !viewModel.isSubmitting ? Color(red: 0.18, green: 0.18, blue: 0.18) : Color.gray)
+                .foregroundStyle(.white)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
             }
-            .disabled(!viewModel.canSubmit)
+            .disabled(!viewModel.canSubmit || viewModel.isSubmitting)
 
             if !viewModel.canSubmit {
                 Text("同じものどうしは選べないよ")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(.red)
+            }
+
+            if let errorMessage = viewModel.errorMessage {
+                Text(errorMessage)
                     .font(.system(size: 13, weight: .bold))
                     .foregroundStyle(.red)
             }
@@ -173,7 +187,9 @@ struct TradeOffersView: View {
                 Text("みんなの出品")
                     .font(.system(size: 28, weight: .black, design: .rounded))
 
-                if viewModel.openOffers.isEmpty {
+                if viewModel.isLoading {
+                    loadingState
+                } else if viewModel.openOffers.isEmpty {
                     emptyState
                 } else {
                     VStack(spacing: 14) {
@@ -182,11 +198,17 @@ struct TradeOffersView: View {
                                 offer: offer,
                                 canCancel: offer.seller == viewModel.currentStudent,
                                 onCancel: {
-                                    viewModel.cancelOffer(id: offer.id)
+                                    Task { await viewModel.cancelOffer(id: offer.id) }
                                 }
                             )
                         }
                     }
+                }
+
+                if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage)
+                        .font(.system(size: 13, weight: .bold))
+                        .foregroundStyle(.red)
                 }
             }
             .padding(24)
@@ -208,6 +230,22 @@ struct TradeOffersView: View {
             Text("出品タブで 先に作ってみよう")
                 .font(.system(size: 14, weight: .bold, design: .rounded))
                 .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(24)
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.black.opacity(0.06), lineWidth: 1)
+        )
+    }
+
+    private var loadingState: some View {
+        VStack(spacing: 12) {
+            ProgressView()
+            Text("出品を読みこみ中")
+                .font(.system(size: 18, weight: .black, design: .rounded))
         }
         .frame(maxWidth: .infinity)
         .padding(24)
