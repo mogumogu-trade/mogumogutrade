@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 100;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -28,12 +28,14 @@
 /* Begin PBXFrameworksBuildPhase section */
 		7281B0D72FC0966D00A6DF4C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 				72F5A1B92FC9B1E8009DAA61 /* DependenciesMacros in Frameworks */,
 				72F5A1B72FC9B1E8009DAA61 /* Dependencies in Frameworks */,
 				FB00000000000000000000A3 /* FirebaseCore in Frameworks */,
 				FB00000000000000000000A5 /* FirebaseFirestore in Frameworks */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -66,6 +68,8 @@
 				7281B0D82FC0966D00A6DF4C /* Resources */,
 			);
 			buildRules = (
+			);
+			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
 				7281B0DC2FC0966D00A6DF4C /* mogumogu-trade */,
@@ -105,7 +109,6 @@
 			);
 			mainGroup = 7281B0D12FC0966D00A6DF4C;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 100;
 			packageReferences = (
 				72F5A1B52FC9B1E8009DAA61 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
 				FB00000000000000000000A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
@@ -123,21 +126,25 @@
 /* Begin PBXResourcesBuildPhase section */
 		7281B0D82FC0966D00A6DF4C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		7281B0D62FC0966D00A6DF4C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		7281B0E32FC0966F00A6DF4C /* Debug configuration for PBXProject "mogumogu-trade" */ = {
+		7281B0E32FC0966F00A6DF4C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -201,7 +208,7 @@
 			};
 			name = Debug;
 		};
-		7281B0E42FC0966F00A6DF4C /* Release configuration for PBXProject "mogumogu-trade" */ = {
+		7281B0E42FC0966F00A6DF4C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -258,7 +265,7 @@
 			};
 			name = Release;
 		};
-		7281B0E62FC0966F00A6DF4C /* Debug configuration for PBXNativeTarget "mogumogu-trade" */ = {
+		7281B0E62FC0966F00A6DF4C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -291,7 +298,7 @@
 			};
 			name = Debug;
 		};
-		7281B0E72FC0966F00A6DF4C /* Release configuration for PBXNativeTarget "mogumogu-trade" */ = {
+		7281B0E72FC0966F00A6DF4C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -330,17 +337,19 @@
 		7281B0D52FC0966D00A6DF4C /* Build configuration list for PBXProject "mogumogu-trade" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7281B0E32FC0966F00A6DF4C /* Debug configuration for PBXProject "mogumogu-trade" */,
-				7281B0E42FC0966F00A6DF4C /* Release configuration for PBXProject "mogumogu-trade" */,
+				7281B0E32FC0966F00A6DF4C /* Debug */,
+				7281B0E42FC0966F00A6DF4C /* Release */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		7281B0E52FC0966F00A6DF4C /* Build configuration list for PBXNativeTarget "mogumogu-trade" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7281B0E62FC0966F00A6DF4C /* Debug configuration for PBXNativeTarget "mogumogu-trade" */,
-				7281B0E72FC0966F00A6DF4C /* Release configuration for PBXNativeTarget "mogumogu-trade" */,
+				7281B0E62FC0966F00A6DF4C /* Debug */,
+				7281B0E72FC0966F00A6DF4C /* Release */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
