@@ -19,21 +19,21 @@ struct AllergyRegistrationView: View {
             .padding(24)
         }
         .background(Color(red: 0.95, green: 0.96, blue: 0.98).ignoresSafeArea())
-        .navigationTitle("アレルギーとうろく")
+        .navigationTitle("アレルギー登録")
         .navigationBarTitleDisplayMode(.inline)
         .task { await viewModel.load() }
     }
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("せんせい用")
+            Text("先生用")
                 .font(.system(size: 12, weight: .black))
                 .foregroundStyle(.white)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 4)
                 .background(Color(red: 0.85, green: 0.35, blue: 0.30))
                 .clipShape(Capsule())
-            Text("生徒ごとに アレルギーを とうろくしてね")
+            Text("生徒ごとにアレルギーを登録してください")
                 .font(.system(size: 18, weight: .black, design: .rounded))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -41,12 +41,12 @@ struct AllergyRegistrationView: View {
 
     private var studentSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("だれの とうろく？")
+            Text("登録する生徒")
                 .font(.system(size: 14, weight: .bold))
                 .foregroundStyle(.secondary)
 
             if viewModel.roster.isEmpty {
-                Text("生徒が いないよ")
+                Text("生徒がいません")
                     .font(.system(size: 13, weight: .bold))
                     .foregroundStyle(.secondary)
             } else {
@@ -90,7 +90,7 @@ struct AllergyRegistrationView: View {
 
     private var allergenSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("アレルギーの ある食べもの")
+            Text("アレルギーのある食べ物")
                 .font(.system(size: 14, weight: .bold))
                 .foregroundStyle(.secondary)
 
@@ -150,7 +150,7 @@ struct AllergyRegistrationView: View {
             } label: {
                 HStack {
                     if viewModel.isSaving { ProgressView().tint(.white) }
-                    Text(viewModel.isSaving ? "ほぞんしているよ…" : "ほぞんする")
+                    Text(viewModel.isSaving ? "保存中…" : "保存する")
                         .font(.system(size: 18, weight: .black, design: .rounded))
                 }
                 .frame(maxWidth: .infinity)

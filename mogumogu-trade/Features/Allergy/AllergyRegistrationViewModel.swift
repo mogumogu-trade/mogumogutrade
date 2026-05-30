@@ -33,7 +33,7 @@ final class AllergyRegistrationViewModel {
 
     var saveHint: String? {
         guard !isSaving, selectedStudent == nil else { return nil }
-        return "生徒をえらんでね"
+        return "生徒を選んでください"
     }
 
     func load() async {
@@ -46,7 +46,7 @@ final class AllergyRegistrationViewModel {
                 selectedStudentNumber = roster.first?.studentNumber
             }
         } catch {
-            errorMessage = "よみこみに しっぱいしました"
+            errorMessage = "読み込みに失敗しました"
         }
     }
 
@@ -80,9 +80,9 @@ final class AllergyRegistrationViewModel {
         defer { isSaving = false }
         do {
             try await allergyClient.save(classId: classId, allergy: student)
-            savedMessage = "\(student.displayName) のアレルギーを ほぞんしたよ"
+            savedMessage = "\(student.displayName) のアレルギーを保存しました"
         } catch {
-            errorMessage = "ほぞんに しっぱいしました"
+            errorMessage = "保存に失敗しました"
         }
     }
 }

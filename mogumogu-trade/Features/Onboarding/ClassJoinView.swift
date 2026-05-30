@@ -5,53 +5,66 @@ struct ClassJoinView: View {
     @State var viewModel: ClassJoinViewModel
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 24) {
-                header
-
-                inputCard(title: "クラスコード（4〜6けた）", hint: viewModel.classCodeHint) {
-                    TextField("000000", text: Binding(
-                        get: { viewModel.classCode },
-                        set: { viewModel.classCode = viewModel.sanitizeClassCode($0) }
-                    ))
-                    .keyboardType(.numberPad)
-                    .font(.system(size: 28, weight: .black, design: .rounded))
-                    .multilineTextAlignment(.center)
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 24) {
+                    header
+                    
+                    inputCard(title: "クラスコード（4〜6けた）", hint: viewModel.classCodeHint) {
+                        TextField("000000", text: Binding(
+                            get: { viewModel.classCode },
+                            set: { viewModel.classCode = viewModel.sanitizeClassCode($0) }
+                        ))
+                        .keyboardType(.numberPad)
+                        .font(.system(size: 28, weight: .black, design: .rounded))
+                        .multilineTextAlignment(.center)
+                    }
+                    
+                    inputCard(title: "出席ばんごう", hint: viewModel.studentNumberHint) {
+                        TextField("12", text: Binding(
+                            get: { viewModel.studentNumberText },
+                            set: { viewModel.studentNumberText = viewModel.sanitizeStudentNumber($0) }
+                        ))
+                        .keyboardType(.numberPad)
+                        .font(.system(size: 28, weight: .black, design: .rounded))
+                        .multilineTextAlignment(.center)
+                    }
+                    
+                    inputCard(title: "ニックネーム（1〜8もじ）", hint: viewModel.nicknameHint) {
+                        TextField("もぐ", text: Binding(
+                            get: { viewModel.nickname },
+                            set: { viewModel.nickname = viewModel.sanitizeNickname($0) }
+                        ))
+                        .font(.system(size: 22, weight: .bold, design: .rounded))
+                        .multilineTextAlignment(.center)
+                    }
+                    
+                    if let errorMessage = viewModel.errorMessage {
+                        Text(errorMessage)
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundStyle(.red)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    
+                    submitButton
+                    NavigationLink {
+                        TeacherDashboardView()
+                    } label: {
+                        Text("先生はこちら")
+                            .font(.system(size: 16, weight: .bold, design: .rounded))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(Color.orange)
+                            .foregroundStyle(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                    }
                 }
-
-                inputCard(title: "出席ばんごう", hint: viewModel.studentNumberHint) {
-                    TextField("12", text: Binding(
-                        get: { viewModel.studentNumberText },
-                        set: { viewModel.studentNumberText = viewModel.sanitizeStudentNumber($0) }
-                    ))
-                    .keyboardType(.numberPad)
-                    .font(.system(size: 28, weight: .black, design: .rounded))
-                    .multilineTextAlignment(.center)
-                }
-
-                inputCard(title: "ニックネーム（1〜8もじ）", hint: viewModel.nicknameHint) {
-                    TextField("もぐ", text: Binding(
-                        get: { viewModel.nickname },
-                        set: { viewModel.nickname = viewModel.sanitizeNickname($0) }
-                    ))
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
-                    .multilineTextAlignment(.center)
-                }
-
-                if let errorMessage = viewModel.errorMessage {
-                    Text(errorMessage)
-                        .font(.system(size: 14, weight: .bold))
-                        .foregroundStyle(.red)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-
-                submitButton
+                .padding(24)
             }
-            .padding(24)
-        }
-        .background(Color(red: 0.95, green: 0.96, blue: 0.98).ignoresSafeArea())
-        .onTapGesture {
-            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            .background(Color(red: 0.95, green: 0.96, blue: 0.98).ignoresSafeArea())
+            .onTapGesture {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            }
         }
     }
 

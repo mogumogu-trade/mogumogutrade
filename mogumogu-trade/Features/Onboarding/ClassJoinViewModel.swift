@@ -1,4 +1,5 @@
 import Dependencies
+import FirebaseCore
 import Foundation
 
 @Observable
@@ -12,6 +13,7 @@ final class ClassJoinViewModel {
 
     @ObservationIgnored @Dependency(\.classClient) private var classClient
     @ObservationIgnored @Dependency(\.profileStorage) private var profileStorage
+    @ObservationIgnored @Dependency(\.studentClient) private var studentClient
 
     let onJoined: (StudentProfile) -> Void
 
@@ -81,6 +83,10 @@ final class ClassJoinViewModel {
                 errorMessage = "そのクラスコードは見つかりません"
                 return
             }
+            
+            let student = Student(id: UUID(), name: nickname, studentNumber: studentNumber, point: 0, allergies: [], createdAt: Timestamp(date: Date()))
+            try await studentClient.createStudent(classCode, student)
+            
             let profile = StudentProfile(
                 classId: classCode,
                 studentNumber: studentNumber,
