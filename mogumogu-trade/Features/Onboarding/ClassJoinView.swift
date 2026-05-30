@@ -9,7 +9,7 @@ struct ClassJoinView: View {
             VStack(spacing: 24) {
                 header
 
-                inputCard(title: "クラスコード（4〜6けた）") {
+                inputCard(title: "クラスコード（4〜6けた）", hint: viewModel.classCodeHint) {
                     TextField("000000", text: Binding(
                         get: { viewModel.classCode },
                         set: { viewModel.classCode = viewModel.sanitizeClassCode($0) }
@@ -19,7 +19,7 @@ struct ClassJoinView: View {
                     .multilineTextAlignment(.center)
                 }
 
-                inputCard(title: "出席ばんごう") {
+                inputCard(title: "出席ばんごう", hint: viewModel.studentNumberHint) {
                     TextField("12", text: Binding(
                         get: { viewModel.studentNumberText },
                         set: { viewModel.studentNumberText = viewModel.sanitizeStudentNumber($0) }
@@ -29,7 +29,7 @@ struct ClassJoinView: View {
                     .multilineTextAlignment(.center)
                 }
 
-                inputCard(title: "ニックネーム（1〜8もじ）") {
+                inputCard(title: "ニックネーム（1〜8もじ）", hint: viewModel.nicknameHint) {
                     TextField("もぐ", text: Binding(
                         get: { viewModel.nickname },
                         set: { viewModel.nickname = viewModel.sanitizeNickname($0) }
@@ -68,7 +68,11 @@ struct ClassJoinView: View {
     }
 
     @ViewBuilder
-    private func inputCard<Content: View>(title: String, @ViewBuilder content: () -> Content) -> some View {
+    private func inputCard<Content: View>(
+        title: String,
+        hint: String? = nil,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.system(size: 14, weight: .bold))
@@ -82,6 +86,12 @@ struct ClassJoinView: View {
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(Color.black.opacity(0.08), lineWidth: 1)
                 )
+            if let hint {
+                Text(hint)
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(.red)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
         }
     }
 

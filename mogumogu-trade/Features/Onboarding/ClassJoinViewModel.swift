@@ -31,22 +31,30 @@ final class ClassJoinViewModel {
 
     var isNicknameValid: Bool {
         let trimmed = nickname.trimmingCharacters(in: .whitespaces)
-        guard !trimmed.isEmpty else { return false }
-        guard (1...8).contains(nickname.count) else { return false }
-        if nickname.contains(where: { $0.isNewline }) { return false }
-        if nickname.unicodeScalars.contains(where: { CharacterSet.controlCharacters.contains($0) }) { return false }
-        if nickname.unicodeScalars.contains(where: \.properties.isEmojiPresentation) { return false }
-        if nickname.unicodeScalars.contains(where: { $0.properties.isEmoji && !($0.value >= 0x30 && $0.value <= 0x39) }) {
-            return false
-        }
-        let lower = nickname.lowercased()
-        if lower.contains("http://") || lower.contains("https://") || lower.contains("www.") { return false }
-        if lower.contains("@") && lower.contains(".") { return false }
+        guard (1...8).contains(trimmed.count) else { return false }
+        if trimmed.unicodeScalars.contains(where: { CharacterSet.controlCharacters.contains($0) }) { return false }
+        if trimmed.unicodeScalars.contains(where: \.properties.isEmojiPresentation) { return false }
         return true
     }
 
     var canSubmit: Bool {
         !isSubmitting && isClassCodeValid && isStudentNumberValid && isNicknameValid
+    }
+
+    // 入力中の欄が不正なときだけ理由を返す（未入力のときは出さない）
+    var classCodeHint: String? {
+        guard !classCode.isEmpty, !isClassCodeValid else { return nil }
+        return "4〜6けたの すうじを いれてね"
+    }
+
+    var studentNumberHint: String? {
+        guard !studentNumberText.isEmpty, !isStudentNumberValid else { return nil }
+        return "1〜50の ばんごうを いれてね"
+    }
+
+    var nicknameHint: String? {
+        guard !nickname.isEmpty, !isNicknameValid else { return nil }
+        return "1〜8もじ。えもじや きごうは つかえないよ"
     }
 
     func sanitizeClassCode(_ raw: String) -> String {
