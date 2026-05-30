@@ -24,6 +24,20 @@ struct HomeView: View {
                             .foregroundStyle(.white)
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
+                    NavigationLink {
+                        QRCheckView()
+                    } label: {
+                        HStack {
+                            Image(systemName: "qrcode.viewfinder").font(.system(size: 18, weight: .bold))
+                            Text("かんしょくチェック（QR）へ いく").font(.system(size: 16, weight: .bold, design: .rounded))
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color(red: 0.31, green: 0.80, blue: 0.77))
+                        .foregroundStyle(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .shadow(color: Color(red: 0.31, green: 0.80, blue: 0.77).opacity(0.3), radius: 6, x: 0, y: 3)
+                    }
                 }
                 .padding(24)
             }

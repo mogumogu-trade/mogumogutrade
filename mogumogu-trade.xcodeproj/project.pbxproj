@@ -40,10 +40,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		460ADDCB2FCA87140058D462 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		7281B0D12FC0966D00A6DF4C = {
 			isa = PBXGroup;
 			children = (
 				7281B0DC2FC0966D00A6DF4C /* mogumogu-trade */,
+				460ADDCB2FCA87140058D462 /* Frameworks */,
 				7281B0DB2FC0966D00A6DF4C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -272,9 +280,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = TVH687AC7F;
+				DEVELOPMENT_TEAM = W55XS33Y2P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				INFOPLIST_KEY_NSCameraUsageDescription = "給食の完食QRコードを読み取るためにカメラを使用します。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -305,9 +315,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = TVH687AC7F;
+				DEVELOPMENT_TEAM = W55XS33Y2P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				INFOPLIST_KEY_NSCameraUsageDescription = "給食の完食QRコードを読み取るためにカメラを使用します。";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
