@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct BettingView: View {
+struct BetView: View {
     // 親から受け取る表示用のデータ
     let menuItems: [String]
     let stocks: [Int]
