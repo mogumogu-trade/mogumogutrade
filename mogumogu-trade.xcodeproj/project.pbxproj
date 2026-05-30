@@ -9,7 +9,8 @@
 /* Begin PBXBuildFile section */
 		72F5A1B72FC9B1E8009DAA61 /* Dependencies in Frameworks */ = {isa = PBXBuildFile; productRef = 72F5A1B62FC9B1E8009DAA61 /* Dependencies */; };
 		72F5A1B92FC9B1E8009DAA61 /* DependenciesMacros in Frameworks */ = {isa = PBXBuildFile; productRef = 72F5A1B82FC9B1E8009DAA61 /* DependenciesMacros */; };
-		72F5A1BB2FC9B1E8009DAA61 /* DependenciesTestSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 72F5A1BA2FC9B1E8009DAA61 /* DependenciesTestSupport */; };
+		FB00000000000000000000A3 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = FB00000000000000000000A2 /* FirebaseCore */; };
+		FB00000000000000000000A5 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = FB00000000000000000000A4 /* FirebaseFirestore */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,7 +32,8 @@
 			files = (
 				72F5A1B92FC9B1E8009DAA61 /* DependenciesMacros in Frameworks */,
 				72F5A1B72FC9B1E8009DAA61 /* Dependencies in Frameworks */,
-				72F5A1BB2FC9B1E8009DAA61 /* DependenciesTestSupport in Frameworks */,
+				FB00000000000000000000A3 /* FirebaseCore in Frameworks */,
+				FB00000000000000000000A5 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,7 +78,8 @@
 			packageProductDependencies = (
 				72F5A1B62FC9B1E8009DAA61 /* Dependencies */,
 				72F5A1B82FC9B1E8009DAA61 /* DependenciesMacros */,
-				72F5A1BA2FC9B1E8009DAA61 /* DependenciesTestSupport */,
+				FB00000000000000000000A2 /* FirebaseCore */,
+				FB00000000000000000000A4 /* FirebaseFirestore */,
 			);
 			productName = "mogumogu-trade";
 			productReference = 7281B0DA2FC0966D00A6DF4C /* mogumogu-trade.app */;
@@ -108,6 +111,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				72F5A1B52FC9B1E8009DAA61 /* XCRemoteSwiftPackageReference "swift-dependencies" */,
+				FB00000000000000000000A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7281B0DB2FC0966D00A6DF4C /* Products */;
@@ -359,6 +363,14 @@
 				minimumVersion = 1.12.0;
 			};
 		};
+		FB00000000000000000000A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -372,10 +384,15 @@
 			package = 72F5A1B52FC9B1E8009DAA61 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
 			productName = DependenciesMacros;
 		};
-		72F5A1BA2FC9B1E8009DAA61 /* DependenciesTestSupport */ = {
+		FB00000000000000000000A2 /* FirebaseCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 72F5A1B52FC9B1E8009DAA61 /* XCRemoteSwiftPackageReference "swift-dependencies" */;
-			productName = DependenciesTestSupport;
+			package = FB00000000000000000000A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		FB00000000000000000000A4 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FB00000000000000000000A1 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
