@@ -14,7 +14,7 @@ struct HomeView: View {
                     tradeEntry
 
                     NavigationLink {
-                        BetView()
+                        AuctionTabView(viewModel: AuctionViewModel(profile: viewModel.profile))
                     } label: {
                         Text("ベットへ いく")
                             .font(.system(size: 16, weight: .bold, design: .rounded))

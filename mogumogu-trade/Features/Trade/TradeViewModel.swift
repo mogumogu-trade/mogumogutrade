@@ -74,6 +74,18 @@ final class TradeViewModel {
         message = nil
     }
 
+    func cancelOffer(id: String) {
+        guard let offerIndex = offers.firstIndex(where: {
+            $0.id == id
+                && $0.seller == currentStudent
+                && $0.status == .open
+        }) else { return }
+
+        offers.remove(at: offerIndex)
+        match = nil
+        message = "出品を取り消したよ"
+    }
+
     func resetSampleData() {
         selectedOffering = .tomato
         selectedRequesting = .greenPepper

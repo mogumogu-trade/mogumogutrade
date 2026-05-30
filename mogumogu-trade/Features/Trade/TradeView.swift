@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct TradeView: View {
-    @State var viewModel: TradeViewModel
+    @Bindable var viewModel: TradeViewModel
 
     var body: some View {
         ScrollView {
@@ -9,21 +9,12 @@ struct TradeView: View {
                 studentCard
                 offerBuilder
                 resultBanner
-                openOfferList
             }
             .padding(24)
         }
         .background(Color(red: 0.95, green: 0.96, blue: 0.98).ignoresSafeArea())
         .navigationTitle("今日のトレード")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("リセット") {
-                    viewModel.resetSampleData()
-                }
-                .fontWeight(.bold)
-            }
-        }
     }
 
     private var studentCard: some View {
@@ -110,7 +101,7 @@ struct TradeView: View {
                             .font(.system(size: 14, weight: .bold, design: .rounded))
                     }
                 } else {
-                    Text("出品リストに入ったよ")
+                    Text(message == "出品を取り消したよ" ? "取り消しできたよ" : "出品リストに入ったよ")
                         .font(.system(size: 15, weight: .bold, design: .rounded))
                         .foregroundStyle(.secondary)
                 }
@@ -127,17 +118,6 @@ struct TradeView: View {
             .clipShape(RoundedRectangle(cornerRadius: 16))
         }
     }
-
-    private var openOfferList: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Text("みんなの出品")
-                .font(.system(size: 22, weight: .black, design: .rounded))
-
-            ForEach(viewModel.openOffers) { offer in
-                TradeOfferRow(offer: offer)
-            }
-        }
-    }
 }
 
 private struct ConditionPickerCard: View {
@@ -150,35 +130,110 @@ private struct ConditionPickerCard: View {
                 .font(.system(size: 14, weight: .bold))
                 .foregroundStyle(.secondary)
 
-            Picker(title, selection: $selection) {
+            Menu {
                 ForEach(TradeConditionCategory.allCases) { category in
                     Section(category.title) {
                         ForEach(TradeCondition.options(for: category)) { condition in
-                            Label(condition.title, systemImage: category.systemImage)
-                                .tag(condition)
+                            Button {
+                                selection = condition
+                            } label: {
+                                Label(condition.title, systemImage: category.systemImage)
+                            }
+                        }
+                    }
+                }
+            } label: {
+                HStack {
+                    Image(systemName: selection.category.systemImage)
+                    Text(selection.category.title)
+                    Text(selection.title)
+                        .fontWeight(.black)
+                    Spacer()
+                    Image(systemName: "chevron.up.chevron.down")
+                        .font(.system(size: 13, weight: .black))
+                        .foregroundStyle(.secondary)
+                }
+                .font(.system(size: 17, weight: .bold, design: .rounded))
+                .foregroundStyle(.primary)
+                .padding(14)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(red: 1.0, green: 0.58, blue: 0.53).opacity(0.16))
+                .clipShape(RoundedRectangle(cornerRadius: 14))
+            }
+        }
+    }
+}
+
+struct TradeOffersView: View {
+    let viewModel: TradeViewModel
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 18) {
+                Text("みんなの出品")
+                    .font(.system(size: 28, weight: .black, design: .rounded))
+
+                if viewModel.openOffers.isEmpty {
+                    emptyState
+                } else {
+                    VStack(spacing: 14) {
+                        ForEach(viewModel.openOffers) { offer in
+                            TradeOfferRow(
+                                offer: offer,
+                                canCancel: offer.seller == viewModel.currentStudent,
+                                onCancel: {
+                                    viewModel.cancelOffer(id: offer.id)
+                                }
+                            )
                         }
                     }
                 }
             }
-            .pickerStyle(.menu)
-
-            HStack {
-                Image(systemName: selection.category.systemImage)
-                Text(selection.category.title)
-                Text(selection.title)
-                    .fontWeight(.black)
-                Spacer()
-            }
-            .font(.system(size: 17, weight: .bold, design: .rounded))
-            .padding(14)
-            .background(Color(red: 1.0, green: 0.58, blue: 0.53).opacity(0.16))
-            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .padding(24)
         }
+        .background(Color(red: 0.95, green: 0.96, blue: 0.98).ignoresSafeArea())
+        .navigationTitle("みんなの出品")
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var emptyState: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "tray")
+                .font(.system(size: 42))
+                .foregroundStyle(.secondary)
+
+            Text("まだ出品がないよ")
+                .font(.system(size: 20, weight: .black, design: .rounded))
+
+            Text("出品タブで 先に作ってみよう")
+                .font(.system(size: 14, weight: .bold, design: .rounded))
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(24)
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.black.opacity(0.06), lineWidth: 1)
+        )
     }
 }
 
 private struct TradeOfferRow: View {
     let offer: TradeOffer
+    let canCancel: Bool
+    let onCancel: () -> Void
+
+    init(
+        offer: TradeOffer,
+        canCancel: Bool = false,
+        onCancel: @escaping () -> Void = {}
+    ) {
+        self.offer = offer
+        self.canCancel = canCancel
+        self.onCancel = onCancel
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -200,6 +255,20 @@ private struct TradeOfferRow: View {
                     .fontWeight(.black)
                     .foregroundStyle(.secondary)
                 ConditionPill(title: "ほしい", condition: offer.requesting, color: .pink)
+            }
+
+            if canCancel {
+                Button {
+                    onCancel()
+                } label: {
+                    Label("出品を取り消す", systemImage: "trash")
+                        .font(.system(size: 14, weight: .black, design: .rounded))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(Color.red.opacity(0.12))
+                        .foregroundStyle(.red)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
             }
         }
         .padding(16)

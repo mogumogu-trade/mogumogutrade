@@ -1,11 +1,9 @@
 import SwiftUI
 
 struct BetView: View {
-    private let menuItems = ["揚げ\nパン", "プリン", "ゼリー"]
-    private let stocks = [2, 1, 3]
+    let room: AuctionRoom
+    @Binding var pointBalance: Int
 
-    @State private var currentIndex = 0
-    @State private var myPoints = 500
     @State private var betAmountString = ""
     @State private var lastBetAmount = 0
     @State private var screenState = "bet"
@@ -25,7 +23,6 @@ struct BetView: View {
                 switch screenState {
                 case "wait":
                     WaitingView(
-                        myPoints: $myPoints,
                         lastBetAmount: $lastBetAmount,
                         screenState: $screenState
                     )
@@ -38,10 +35,8 @@ struct BetView: View {
                     LoseView(screenState: $screenState)
                 default:
                     BettingView(
-                        menuItems: menuItems,
-                        stocks: stocks,
-                        currentIndex: $currentIndex,
-                        myPoints: $myPoints,
+                        room: room,
+                        pointBalance: $pointBalance,
                         betAmountString: $betAmountString,
                         lastBetAmount: $lastBetAmount,
                         screenState: $screenState
@@ -61,6 +56,9 @@ struct BetView: View {
 
 #Preview {
     NavigationStack {
-        BetView()
+        BetView(
+            room: AuctionRoom(id: "preview", itemName: "プリン", stockCount: 1),
+            pointBalance: .constant(120)
+        )
     }
 }

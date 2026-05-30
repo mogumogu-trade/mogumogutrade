@@ -11,7 +11,7 @@ struct AppRootView: View {
 
     var body: some View {
         if let profile {
-            HomeView(viewModel: HomeViewModel(profile: profile))
+            MainTabView(profile: profile)
         } else {
             ClassJoinView(viewModel: ClassJoinViewModel(onJoined: { profile = $0 }))
         }
