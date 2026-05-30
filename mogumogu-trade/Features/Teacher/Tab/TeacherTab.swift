@@ -5,7 +5,7 @@ struct TeacherDashboardView: View {
     var body: some View {
         TabView {
 
-            AuctionManageView()
+            TeacherView()
                 .tabItem {
                     Image(systemName: "bell.badge.fill")
                     Text("開催")
