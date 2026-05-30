@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct WaitingView: View {
-    @Binding var myPoints: Int
     @Binding var lastBetAmount: Int
     @Binding var screenState: String
     
@@ -22,19 +21,6 @@ struct WaitingView: View {
                 .onAppear {
                     withAnimation(Animation.linear(duration: 3).repeatForever(autoreverses: false)) {
                         isRotating = true
-                    }
-                    
-                    // 3秒後に自動で結果判定を行う
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-                        if screenState == "wait" {
-                            let isWin = Bool.random()
-                            if isWin {
-                                screenState = "win"
-                            } else {
-                                myPoints += lastBetAmount
-                                screenState = "lose"
-                            }
-                        }
                     }
                 }
                 .padding(.vertical, 20)
