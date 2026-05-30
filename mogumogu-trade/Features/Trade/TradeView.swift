@@ -12,7 +12,7 @@ struct TradeView: View {
             }
             .padding(24)
         }
-        .background(Color(red: 0.95, green: 0.96, blue: 0.98).ignoresSafeArea())
+        .background(AppColors.bg.ignoresSafeArea())
         .navigationTitle("今日のトレード")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -21,7 +21,7 @@ struct TradeView: View {
         HStack(spacing: 14) {
             Image(systemName: "person.crop.circle.fill")
                 .font(.system(size: 42))
-                .foregroundStyle(Color(red: 0.47, green: 0.33, blue: 0.28))
+                .foregroundStyle(AppColors.primary)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text("出品する人")
@@ -34,11 +34,11 @@ struct TradeView: View {
             Spacer()
         }
         .padding(16)
-        .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .background(AppColors.card)
+        .clipShape(RoundedRectangle(cornerRadius: 22))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.black.opacity(0.06), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 22)
+                .stroke(AppColors.primaryLight.opacity(0.45), lineWidth: 2)
         )
     }
 
@@ -64,9 +64,10 @@ struct TradeView: View {
                     .font(.system(size: 18, weight: .black, design: .rounded))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(viewModel.canSubmit ? Color(red: 0.18, green: 0.18, blue: 0.18) : Color.gray)
+                    .background(viewModel.canSubmit ? AppColors.primary : Color.gray)
                     .foregroundStyle(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .shadow(color: viewModel.canSubmit ? AppColors.primary.opacity(0.28) : .clear, radius: 8, x: 0, y: 4)
             }
             .disabled(!viewModel.canSubmit)
 
@@ -77,11 +78,11 @@ struct TradeView: View {
             }
         }
         .padding(16)
-        .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .background(AppColors.card)
+        .clipShape(RoundedRectangle(cornerRadius: 22))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.black.opacity(0.06), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 22)
+                .stroke(AppColors.primaryLight.opacity(0.45), lineWidth: 2)
         )
     }
 
@@ -114,8 +115,8 @@ struct TradeView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(18)
-            .background(viewModel.match == nil ? Color.yellow.opacity(0.32) : Color.green.opacity(0.32))
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .background(viewModel.match == nil ? AppColors.primaryLight.opacity(0.34) : AppColors.accent.opacity(0.24))
+            .clipShape(RoundedRectangle(cornerRadius: 22))
         }
     }
 }
@@ -157,8 +158,12 @@ private struct ConditionPickerCard: View {
                 .foregroundStyle(.primary)
                 .padding(14)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color(red: 1.0, green: 0.58, blue: 0.53).opacity(0.16))
-                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .background(AppColors.primaryLight.opacity(0.25))
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18)
+                        .stroke(AppColors.primary.opacity(0.18), lineWidth: 1)
+                )
             }
         }
     }
@@ -191,7 +196,7 @@ struct TradeOffersView: View {
             }
             .padding(24)
         }
-        .background(Color(red: 0.95, green: 0.96, blue: 0.98).ignoresSafeArea())
+        .background(AppColors.bg.ignoresSafeArea())
         .navigationTitle("みんなの出品")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -211,11 +216,11 @@ struct TradeOffersView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(24)
-        .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .background(AppColors.card)
+        .clipShape(RoundedRectangle(cornerRadius: 22))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.black.opacity(0.06), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 22)
+                .stroke(AppColors.primaryLight.opacity(0.45), lineWidth: 2)
         )
     }
 }
@@ -245,16 +250,16 @@ private struct TradeOfferRow: View {
                     .font(.system(size: 11, weight: .black))
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
-                    .background(offer.status == .open ? Color.green.opacity(0.2) : Color.gray.opacity(0.2))
+                    .background(offer.status == .open ? AppColors.accent.opacity(0.2) : Color.gray.opacity(0.2))
                     .clipShape(Capsule())
             }
 
             HStack(spacing: 10) {
-                ConditionPill(title: "出す", condition: offer.offering, color: .blue)
+                ConditionPill(title: "出す", condition: offer.offering, color: AppColors.primary)
                 Image(systemName: "arrow.left.arrow.right")
                     .fontWeight(.black)
                     .foregroundStyle(.secondary)
-                ConditionPill(title: "ほしい", condition: offer.requesting, color: .pink)
+                ConditionPill(title: "ほしい", condition: offer.requesting, color: AppColors.primaryLight)
             }
 
             if canCancel {
@@ -272,11 +277,11 @@ private struct TradeOfferRow: View {
             }
         }
         .padding(16)
-        .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .background(AppColors.card)
+        .clipShape(RoundedRectangle(cornerRadius: 22))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.black.opacity(0.06), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 22)
+                .stroke(AppColors.primaryLight.opacity(0.45), lineWidth: 2)
         )
     }
 }

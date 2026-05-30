@@ -49,7 +49,7 @@ struct ClassJoinView: View {
             }
             .padding(24)
         }
-        .background(Color(red: 0.95, green: 0.96, blue: 0.98).ignoresSafeArea())
+        .background(AppColors.bg.ignoresSafeArea())
         .onTapGesture {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         }
@@ -57,6 +57,9 @@ struct ClassJoinView: View {
 
     private var header: some View {
         VStack(spacing: 8) {
+            Image(systemName: "fork.knife.circle.fill")
+                .font(.system(size: 54))
+                .foregroundStyle(AppColors.primary)
             Text("クラスに さんかしよう")
                 .font(.system(size: 26, weight: .black, design: .rounded))
             Text("せんせいから もらった コードを いれてね")
@@ -80,11 +83,11 @@ struct ClassJoinView: View {
             content()
                 .padding(.vertical, 10)
                 .padding(.horizontal, 12)
-                .background(Color.white)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .background(AppColors.card)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.black.opacity(0.08), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(AppColors.primaryLight.opacity(0.55), lineWidth: 2)
                 )
             if let hint {
                 Text(hint)
@@ -108,9 +111,10 @@ struct ClassJoinView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
-            .background(viewModel.canSubmit ? Color(red: 0.18, green: 0.18, blue: 0.18) : Color.gray)
+            .background(viewModel.canSubmit ? AppColors.primary : Color.gray)
             .foregroundStyle(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .shadow(color: viewModel.canSubmit ? AppColors.primary.opacity(0.3) : .clear, radius: 8, x: 0, y: 4)
         }
         .disabled(!viewModel.canSubmit)
     }

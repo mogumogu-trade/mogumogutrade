@@ -17,14 +17,14 @@ struct BettingView: View {
 
             HStack {
                 Image(systemName: "star.circle.fill")
-                    .foregroundColor(AppColors.darkText)
+                    .foregroundColor(AppColors.primary)
                 Text("持っているポイント: \(pointBalance) P")
                     .font(.system(size: 14, weight: .bold, design: .rounded))
                     .foregroundColor(AppColors.darkText)
             }
             .padding(.horizontal, 15)
             .padding(.vertical, 8)
-            .background(Color.white)
+            .background(AppColors.card)
             .cornerRadius(20)
 
             HStack(spacing: 15) {
@@ -41,7 +41,7 @@ struct BettingView: View {
 
                     Text("残り\(room.stockCount)人")
                         .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(AppColors.bet)
+                        .foregroundColor(AppColors.primary)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .background(Color.white)
@@ -75,7 +75,7 @@ struct BettingView: View {
                 if currentBet > pointBalance {
                     Text("持っているポイントより多いよ！")
                         .font(.system(size: 12, weight: .bold))
-                        .foregroundColor(.yellow)
+                        .foregroundColor(AppColors.primaryLight)
                         .padding(.top, 5)
                 } else {
                     Text(" ")
@@ -102,8 +102,9 @@ struct BettingView: View {
                     .foregroundColor(.white)
                     .padding(.horizontal, 25)
                     .padding(.vertical, 15)
-                    .background(isValidBet ? AppColors.darkText : Color.gray)
+                    .background(isValidBet ? AppColors.primary : Color.gray)
                     .cornerRadius(15)
+                    .shadow(color: isValidBet ? AppColors.primary.opacity(0.35) : .clear, radius: 8, x: 0, y: 4)
             }
             .disabled(!isValidBet)
         }

@@ -13,6 +13,7 @@ struct QRCheckView: View {
                     }
                     .pickerStyle(SegmentedPickerStyle())
                     .padding()
+                    .tint(AppColors.primary)
                     
                     if viewModel.selectedTab == 0 {
                         // ==================== 【みせる側】 ====================
@@ -20,7 +21,7 @@ struct QRCheckView: View {
                             Text("友だちのトレイがピカピカなら\nQRコードをみせてあげよう！")
                                 .font(.system(size: 14, weight: .bold))
                                 .multilineTextAlignment(.center)
-                                .foregroundColor(.gray)
+                                .foregroundColor(AppColors.darkText.opacity(0.68))
                                 .padding()
                             
                             if let qrImage = viewModel.generateQRCode(from: viewModel.qrTokenString) {
@@ -29,9 +30,13 @@ struct QRCheckView: View {
                                     .interpolation(.none)
                                     .frame(width: 200, height: 200)
                                     .padding(20)
-                                    .background(Color.white)
+                                    .background(AppColors.card)
                                     .cornerRadius(16)
-                                    .shadow(radius: 5)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(AppColors.primaryLight.opacity(0.55), lineWidth: 2)
+                                    )
+                                    .shadow(color: AppColors.primary.opacity(0.14), radius: 8, x: 0, y: 4)
                             }
                         }
                         .padding(.top, 40)
@@ -41,7 +46,7 @@ struct QRCheckView: View {
                         VStack(spacing: 20) {
                             Text("友だちのスマホのQRコードを\nカメラでうつしてね！")
                                 .font(.system(size: 16, weight: .bold))
-                                .foregroundColor(.gray)
+                                .foregroundColor(AppColors.darkText.opacity(0.68))
                             
                             ZStack {
                                 // 📸 本物のカメラ映像
@@ -52,9 +57,9 @@ struct QRCheckView: View {
                                 .cornerRadius(24)
                                 .shadow(radius: 10)
                                 
-                                // スキャン枠（ミントグリーン）
+                                // スキャン枠
                                 RoundedRectangle(cornerRadius: 16)
-                                    .stroke(Color(customHex: "4ECDC4"), lineWidth: 4)
+                                    .stroke(AppColors.primaryLight, lineWidth: 4)
                                     .frame(width: 200, height: 200)
                                 
                                 Text("ここにQRをあわせてね")
@@ -69,6 +74,7 @@ struct QRCheckView: View {
                 }
                 .navigationTitle("かんしょくチェック")
                 .navigationBarTitleDisplayMode(.inline)
+                .background(AppColors.bg.ignoresSafeArea())
             }
             .onAppear {
                 viewModel.startLaserAnimation()
@@ -89,7 +95,7 @@ struct QRCheckView: View {
                     
                     Text("完食達成！")
                         .font(.system(size: 54, weight: .black, design: .rounded))
-                        .foregroundColor(.red)
+                        .foregroundColor(AppColors.primaryLight)
                         .shadow(color: .white, radius: 2)
                         .scaleEffect(viewModel.confettiAnimate ? 1.1 : 0.5)
                     
@@ -111,7 +117,7 @@ struct QRCheckView: View {
                     
                     Text("いまのポイント: \(viewModel.pointsForAnimation) pt")
                         .font(.system(size: 18, weight: .bold, design: .rounded))
-                        .foregroundColor(.yellow)
+                        .foregroundColor(AppColors.primaryLight)
                     
                     Spacer()
 
@@ -123,9 +129,9 @@ struct QRCheckView: View {
                             .foregroundColor(.white)
                             .padding(.vertical, 16)
                             .padding(.horizontal, 40)
-                            .background(Color(customHex: "4ECDC4"))
+                            .background(AppColors.primary)
                             .cornerRadius(50)
-                            .shadow(color: Color(customHex: "4ECDC4").opacity(0.4), radius: 10, x: 0, y: 5)
+                            .shadow(color: AppColors.primary.opacity(0.4), radius: 10, x: 0, y: 5)
                     }
                     .padding(.bottom, 50)
                 }

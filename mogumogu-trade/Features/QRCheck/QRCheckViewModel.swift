@@ -6,11 +6,12 @@ class QRCheckViewModel: ObservableObject {
     @Published var selectedTab = 1
     @Published var qrTokenString: String = "KM-sota-TEST"
     
-    // 演出用の状態
     @Published var laserOffset: CGFloat = -95
     @Published var isShowingCelebration = false
     @Published var pointsForAnimation: Int = 350
     @Published var confettiAnimate = false
+    
+    var onPointAdded: (() -> Void)?
     
     func startLaserAnimation() {
         DispatchQueue.main.async {
@@ -29,9 +30,11 @@ class QRCheckViewModel: ObservableObject {
         print("ガチでQR読めた！中身: \(scannedCode)")
         isShowingCelebration = true
         
+        onPointAdded?()
+        
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
             withAnimation(.easeInOut(duration: 0.4)) {
-                self.pointsForAnimation += 50
+                self.pointsForAnimation += 1
             }
         }
     }
