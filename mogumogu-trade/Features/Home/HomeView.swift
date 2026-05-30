@@ -11,7 +11,7 @@ struct HomeView: View {
                     Text("今日の トレード")
                         .font(.system(size: 22, weight: .black, design: .rounded))
                         .padding(.top, 8)
-                    emptyState
+                    tradeEntry
 
                     NavigationLink {
                         BetView()
@@ -56,18 +56,32 @@ struct HomeView: View {
         )
     }
 
-    private var emptyState: some View {
-        VStack(spacing: 8) {
-            Image(systemName: "tray")
-                .font(.system(size: 40))
+    private var tradeEntry: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "arrow.left.arrow.right.circle.fill")
+                .font(.system(size: 42))
+                .foregroundStyle(Color(red: 0.47, green: 0.33, blue: 0.28))
+            Text("出品してみよう")
+                .font(.system(size: 18, weight: .black, design: .rounded))
+            Text("わたすものと ほしいものを えらぶよ")
+                .font(.system(size: 13, weight: .bold, design: .rounded))
                 .foregroundStyle(.secondary)
-            Text("まだ トレードはないよ")
-                .font(.system(size: 14, weight: .bold))
-                .foregroundStyle(.secondary)
+
+            NavigationLink {
+                TradeView(viewModel: TradeViewModel(profile: viewModel.profile))
+            } label: {
+                Text("トレードへ いく")
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(Color(red: 0.18, green: 0.18, blue: 0.18))
+                    .foregroundStyle(.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+            }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 40)
-        .background(Color.white.opacity(0.6))
+        .padding(18)
+        .background(Color.white.opacity(0.8))
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }
