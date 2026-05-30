@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 100;
 	objects = {
 
 /* Begin PBXFileReference section */
@@ -21,10 +21,8 @@
 /* Begin PBXFrameworksBuildPhase section */
 		7281B0D72FC0966D00A6DF4C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -58,14 +56,10 @@
 			);
 			buildRules = (
 			);
-			dependencies = (
-			);
 			fileSystemSynchronizedGroups = (
 				7281B0DC2FC0966D00A6DF4C /* mogumogu-trade */,
 			);
 			name = "mogumogu-trade";
-			packageProductDependencies = (
-			);
 			productName = "mogumogu-trade";
 			productReference = 7281B0DA2FC0966D00A6DF4C /* mogumogu-trade.app */;
 			productType = "com.apple.product-type.application";
@@ -94,7 +88,7 @@
 			);
 			mainGroup = 7281B0D12FC0966D00A6DF4C;
 			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
+			preferredProjectObjectVersion = 100;
 			productRefGroup = 7281B0DB2FC0966D00A6DF4C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -107,25 +101,21 @@
 /* Begin PBXResourcesBuildPhase section */
 		7281B0D82FC0966D00A6DF4C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		7281B0D62FC0966D00A6DF4C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
 			files = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		7281B0E32FC0966F00A6DF4C /* Debug */ = {
+		7281B0E32FC0966F00A6DF4C /* Debug configuration for PBXProject "mogumogu-trade" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -189,7 +179,7 @@
 			};
 			name = Debug;
 		};
-		7281B0E42FC0966F00A6DF4C /* Release */ = {
+		7281B0E42FC0966F00A6DF4C /* Release configuration for PBXProject "mogumogu-trade" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -246,7 +236,7 @@
 			};
 			name = Release;
 		};
-		7281B0E62FC0966F00A6DF4C /* Debug */ = {
+		7281B0E62FC0966F00A6DF4C /* Debug configuration for PBXNativeTarget "mogumogu-trade" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -261,7 +251,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -279,7 +269,7 @@
 			};
 			name = Debug;
 		};
-		7281B0E72FC0966F00A6DF4C /* Release */ = {
+		7281B0E72FC0966F00A6DF4C /* Release configuration for PBXNativeTarget "mogumogu-trade" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -294,7 +284,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -318,19 +308,17 @@
 		7281B0D52FC0966D00A6DF4C /* Build configuration list for PBXProject "mogumogu-trade" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7281B0E32FC0966F00A6DF4C /* Debug */,
-				7281B0E42FC0966F00A6DF4C /* Release */,
+				7281B0E32FC0966F00A6DF4C /* Debug configuration for PBXProject "mogumogu-trade" */,
+				7281B0E42FC0966F00A6DF4C /* Release configuration for PBXProject "mogumogu-trade" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		7281B0E52FC0966F00A6DF4C /* Build configuration list for PBXNativeTarget "mogumogu-trade" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7281B0E62FC0966F00A6DF4C /* Debug */,
-				7281B0E72FC0966F00A6DF4C /* Release */,
+				7281B0E62FC0966F00A6DF4C /* Debug configuration for PBXNativeTarget "mogumogu-trade" */,
+				7281B0E72FC0966F00A6DF4C /* Release configuration for PBXNativeTarget "mogumogu-trade" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
