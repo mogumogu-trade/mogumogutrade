@@ -41,6 +41,9 @@ struct MainTabView: View {
                 Label("オークション", systemImage: "crown.fill")
             }
         }
+        .task {
+            await tradeViewModel.observeOffers()
+        }
     }
 }
 
