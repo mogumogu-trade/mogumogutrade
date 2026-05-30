@@ -14,7 +14,15 @@ struct HomeView: View {
                     emptyState
 
                     NavigationLink {
-                      //  BetView()
+                        BetView(
+                                menuItems: ["揚げ\nパン", "プリン", "ゼリー"],
+                                stocks: [2, 1, 3],
+                                currentIndex: .constant(0),
+                                myPoints: .constant(500),
+                                betAmountString: .constant(""),
+                                lastBetAmount: .constant(0),
+                                screenState: .constant("bet")
+                            )
                     } label: {
                         Text("ベットへ いく")
                             .font(.system(size: 16, weight: .bold, design: .rounded))
