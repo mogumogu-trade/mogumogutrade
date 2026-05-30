@@ -16,7 +16,7 @@ struct mogumogu_tradeApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AppRootView()
         }
     }
 }
