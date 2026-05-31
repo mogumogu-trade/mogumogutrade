@@ -11,18 +11,28 @@ struct StudentsInformationView: View {
             
             List {
                 ForEach(viewModel.students) { student in
-                    
-                    VStack(alignment: .leading, spacing: 6) {
-                        
-                        Text(student.name)
-                            .font(.headline)
-                        
-                        Text("学籍番号: \(student.studentNumber)")
-                        Text("ポイント: \(student.point)")
-                        
-                        Text("アレルギー: \(student.allergies.joined(separator: ", "))")
-                            .font(.caption)
-                            .foregroundStyle(.gray)
+
+                    NavigationLink {
+                        AllergyRegistrationView(
+                            viewModel: AllergyRegistrationViewModel(
+                                classId: viewModel.classId,
+                                focusedStudentNumber: student.studentNumber,
+                                focusedStudentName: student.name
+                            )
+                        )
+                    } label: {
+                        VStack(alignment: .leading, spacing: 6) {
+
+                            Text(student.name)
+                                .font(.headline)
+
+                            Text("学籍番号: \(student.studentNumber)")
+                            Text("ポイント: \(student.point)")
+
+                            Text("アレルギー: \(student.allergies.joined(separator: ", "))")
+                                .font(.caption)
+                                .foregroundStyle(.gray)
+                        }
                     }
                 }
             }

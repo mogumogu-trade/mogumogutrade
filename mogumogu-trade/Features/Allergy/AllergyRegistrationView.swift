@@ -11,7 +11,11 @@ struct AllergyRegistrationView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 header
-                studentSection
+                if viewModel.isSingleStudentMode {
+                    focusedStudentLabel
+                } else {
+                    studentSection
+                }
                 allergenSection
                 messages
                 saveButton
@@ -34,6 +38,18 @@ struct AllergyRegistrationView: View {
                 .background(Color(red: 0.85, green: 0.35, blue: 0.30))
                 .clipShape(Capsule())
             Text("生徒ごとにアレルギーを登録してください")
+                .font(.system(size: 18, weight: .black, design: .rounded))
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    /// 単一生徒モード（生徒一覧からタップ）で対象生徒名を出すラベル。
+    private var focusedStudentLabel: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("登録する生徒")
+                .font(.system(size: 14, weight: .bold))
+                .foregroundStyle(.secondary)
+            Text(viewModel.focusedDisplayName)
                 .font(.system(size: 18, weight: .black, design: .rounded))
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -173,6 +189,18 @@ struct AllergyRegistrationView: View {
 #Preview("正常") {
     NavigationStack {
         AllergyRegistrationView(viewModel: AllergyRegistrationViewModel(classId: "123456"))
+    }
+}
+
+#Preview("単一生徒（一覧からタップ）") {
+    NavigationStack {
+        AllergyRegistrationView(
+            viewModel: AllergyRegistrationViewModel(
+                classId: "123456",
+                focusedStudentNumber: 3,
+                focusedStudentName: "りん"
+            )
+        )
     }
 }
 
