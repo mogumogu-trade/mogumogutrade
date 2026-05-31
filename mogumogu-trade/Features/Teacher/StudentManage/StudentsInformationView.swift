@@ -27,6 +27,11 @@ struct StudentsInformationView: View {
                 }
             }
             .navigationTitle("生徒一覧")
+            .onAppear(){
+                Task{
+                   await viewModel.getStudents()
+                }
+            }
         }
     }
 }
