@@ -11,7 +11,6 @@ struct StudentsInformationView: View {
             
             List {
                 ForEach(viewModel.students) { student in
-
                     NavigationLink {
                         AllergyRegistrationView(
                             viewModel: AllergyRegistrationViewModel(
@@ -27,7 +26,7 @@ struct StudentsInformationView: View {
                                 .font(.headline)
 
                             Text("学籍番号: \(student.studentNumber)")
-                            Text("ポイント: \(student.point)")
+                            Text("ポイント: \(viewModel.point(for: student))")
 
                             Text("アレルギー: \(student.allergies.joined(separator: ", "))")
                                 .font(.caption)
