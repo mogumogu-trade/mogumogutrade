@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - アプリ全体で使う共通カラー
 struct AppColors {
-    static let bg = Color(red: 1.00, green: 0.95, blue: 0.86)          // みかんクリーム
+    static let bg = Color.clear          // 何も設定しない（デフォルトの色）
     static let card = Color(red: 1.00, green: 0.99, blue: 0.95)        // やわらかい白
     static let primary = Color(red: 1.00, green: 0.47, blue: 0.12)     // みかんオレンジ
     static let primaryLight = Color(red: 1.00, green: 0.73, blue: 0.31)// はちみつ
