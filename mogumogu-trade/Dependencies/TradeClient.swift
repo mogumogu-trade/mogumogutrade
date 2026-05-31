@@ -19,6 +19,7 @@ enum TradeClientError: LocalizedError, Sendable {
     case offerNotFound
     case notCancelable
     case partnerUnavailable
+    case allergyBlocked
 
     var errorDescription: String? {
         switch self {
@@ -30,31 +31,39 @@ enum TradeClientError: LocalizedError, Sendable {
             "この出品は取り消せません"
         case .partnerUnavailable:
             "相手の出品はもう使えません"
+        case .allergyBlocked:
+            "アレルギーのためトレードできません"
         }
     }
 }
 
 extension TradeClient: DependencyKey {
-    static let liveValue = TradeClient(
-        observeOffers: { classId, mealDate in
-            FirestoreTradeService.observeOffers(classId: classId, mealDate: mealDate)
-        },
-        submitOffer: { classId, mealDate, offer in
-            try await FirestoreTradeService.submitOffer(classId: classId, mealDate: mealDate, offer: offer)
-        },
-        acceptOffer: { classId, mealDate, partnerOfferId, accepter, newOfferId in
-            try await FirestoreTradeService.acceptOffer(
-                classId: classId,
-                mealDate: mealDate,
-                partnerOfferId: partnerOfferId,
-                accepter: accepter,
-                newOfferId: newOfferId
-            )
-        },
-        cancelOffer: { classId, mealDate, offerId, student in
-            try await FirestoreTradeService.cancelOffer(classId: classId, mealDate: mealDate, offerId: offerId, student: student)
-        }
-    )
+    static let liveValue: TradeClient = {
+        @Dependency(\.allergyClient) var allergyClient
+        return TradeClient(
+            observeOffers: { classId, mealDate in
+                FirestoreTradeService.observeOffers(classId: classId, mealDate: mealDate)
+            },
+            submitOffer: { classId, mealDate, offer in
+                let roster = try await allergyClient.loadRoster(classId)
+                return try await FirestoreTradeService.submitOffer(classId: classId, mealDate: mealDate, offer: offer, roster: roster)
+            },
+            acceptOffer: { classId, mealDate, partnerOfferId, accepter, newOfferId in
+                let roster = try await allergyClient.loadRoster(classId)
+                return try await FirestoreTradeService.acceptOffer(
+                    classId: classId,
+                    mealDate: mealDate,
+                    partnerOfferId: partnerOfferId,
+                    accepter: accepter,
+                    newOfferId: newOfferId,
+                    roster: roster
+                )
+            },
+            cancelOffer: { classId, mealDate, offerId, student in
+                try await FirestoreTradeService.cancelOffer(classId: classId, mealDate: mealDate, offerId: offerId, student: student)
+            }
+        )
+    }()
 
     static let previewValue = TradeClient(
         observeOffers: { _, _ in
@@ -133,7 +142,11 @@ private enum FirestoreTradeService {
         }
     }
 
-    static func submitOffer(classId: String, mealDate: String, offer: TradeOffer) async throws -> TradeSubmitResult {
+    static func submitOffer(classId: String, mealDate: String, offer: TradeOffer, roster: [StudentAllergy]) async throws -> TradeSubmitResult {
+        let myAllergens = roster.first(where: { $0.studentNumber == offer.seller.attendanceNumber })?.allergens ?? []
+        guard AllergyChecker.isSafe(foodID: offer.requesting.id, recipientAllergens: myAllergens) else {
+            throw TradeClientError.allergyBlocked
+        }
         return try await queueOffer(classId: classId, offer: offer)
     }
 
@@ -142,7 +155,8 @@ private enum FirestoreTradeService {
         mealDate: String,
         partnerOfferId: String,
         accepter: StudentSummary,
-        newOfferId: String
+        newOfferId: String,
+        roster: [StudentAllergy]
     ) async throws -> TradeMatch {
         let firestore = Firestore.firestore()
         let myRef = tradesCollection(classId: classId).document(newOfferId)
@@ -156,7 +170,7 @@ private enum FirestoreTradeService {
                 do {
                     let partnerSnapshot = try transaction.getDocument(partnerRef)
                     let partnerOffer = try tradeDocument(from: partnerSnapshot).offer
-                    guard canAccept(partnerOffer, mealDate: mealDate, accepter: accepter) else {
+                    guard canAccept(partnerOffer, mealDate: mealDate, accepter: accepter, roster: roster) else {
                         errorPointer?.pointee = partnerUnavailableNSError
                         return nil
                     }
@@ -263,10 +277,24 @@ private enum FirestoreTradeService {
             .collection("trades")
     }
 
-    private static func canAccept(_ partnerOffer: TradeOffer, mealDate: String, accepter: StudentSummary) -> Bool {
-        !isSameStudent(partnerOffer.seller, accepter)
+    private static func canAccept(_ partnerOffer: TradeOffer, mealDate: String, accepter: StudentSummary, roster: [StudentAllergy]) -> Bool {
+        guard !isSameStudent(partnerOffer.seller, accepter)
             && partnerOffer.mealDate == mealDate
-            && partnerOffer.status == .open
+            && partnerOffer.status == .open else {
+            return false
+        }
+        
+        let accepterAllergens = roster.first(where: { $0.studentNumber == accepter.attendanceNumber })?.allergens ?? []
+        if !AllergyChecker.isSafe(foodID: partnerOffer.offering.id, recipientAllergens: accepterAllergens) {
+            return false
+        }
+        
+        let partnerAllergens = roster.first(where: { $0.studentNumber == partnerOffer.seller.attendanceNumber })?.allergens ?? []
+        if !AllergyChecker.isSafe(foodID: partnerOffer.requesting.id, recipientAllergens: partnerAllergens) {
+            return false
+        }
+        
+        return true
     }
 
     private static func isSameStudent(_ lhs: StudentSummary, _ rhs: StudentSummary) -> Bool {
