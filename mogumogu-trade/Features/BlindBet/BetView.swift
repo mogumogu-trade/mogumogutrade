@@ -30,14 +30,14 @@ struct BettingView: View {
 
             HStack {
                 Image(systemName: "star.circle.fill")
-                    .foregroundColor(AppColors.darkText)
+                    .foregroundColor(AppColors.primary)
                 Text("持っているポイント: \(pointBalance) P")
                     .font(.system(size: 14, weight: .bold, design: .rounded))
                     .foregroundColor(AppColors.darkText)
             }
             .padding(.horizontal, 15)
             .padding(.vertical, 8)
-            .background(Color.white)
+            .background(AppColors.card)
             .cornerRadius(20)
 
             ZStack {

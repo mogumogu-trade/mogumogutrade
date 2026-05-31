@@ -13,7 +13,7 @@ struct QRCheckView: View {
         @Bindable var viewModel = viewModel
 
         ZStack {
-            Color(red: 0.95, green: 0.96, blue: 0.98).ignoresSafeArea()
+            AppColors.bg.ignoresSafeArea()
 
             VStack(spacing: 16) {
                 balanceHeader
@@ -24,6 +24,7 @@ struct QRCheckView: View {
                 }
                 .pickerStyle(.segmented)
                 .padding(.horizontal)
+                .tint(AppColors.primary)
 
                 switch viewModel.mode {
                 case .show:
@@ -50,24 +51,20 @@ struct QRCheckView: View {
         }
     }
 
-    // MARK: - 残高
-
     private var balanceHeader: some View {
         HStack(spacing: 6) {
             Image(systemName: "star.circle.fill")
                 .foregroundStyle(.orange)
             Text("いまのポイント \(viewModel.balance) P")
                 .font(.system(size: 18, weight: .black, design: .rounded))
-                .foregroundStyle(Color(red: 0.31, green: 0.22, blue: 0.18))
+                .foregroundStyle(AppColors.darkText)
         }
         .padding(.horizontal, 18)
         .padding(.vertical, 10)
-        .background(Color.white)
+        .background(AppColors.card)
         .clipShape(Capsule())
-        .shadow(color: .black.opacity(0.06), radius: 4, y: 2)
+        .shadow(color: AppColors.primary.opacity(0.10), radius: 4, y: 2)
     }
-
-    // MARK: - みせる（完食者）
 
     private var showSection: some View {
         VStack(spacing: 16) {
@@ -83,9 +80,13 @@ struct QRCheckView: View {
                         .interpolation(.none)
                         .frame(width: 220, height: 220)
                         .padding(20)
-                        .background(Color.white)
+                        .background(AppColors.card)
                         .clipShape(RoundedRectangle(cornerRadius: 16))
-                        .shadow(radius: 5)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(AppColors.primaryLight.opacity(0.55), lineWidth: 2)
+                        )
+                        .shadow(color: AppColors.primary.opacity(0.14), radius: 8, x: 0, y: 4)
                 } else {
                     ProgressView()
                         .frame(width: 260, height: 260)
@@ -102,11 +103,10 @@ struct QRCheckView: View {
                 Label("QRをつくりなおす", systemImage: "arrow.clockwise")
                     .font(.system(size: 13, weight: .bold, design: .rounded))
             }
+            .tint(AppColors.primary)
         }
         .padding()
     }
-
-    // MARK: - よむ（確認者）
 
     private var readSection: some View {
         VStack(spacing: 16) {
@@ -124,8 +124,18 @@ struct QRCheckView: View {
                 .shadow(radius: 10)
 
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color(customHex: "4ECDC4"), lineWidth: 4)
+                    .stroke(AppColors.primaryLight, lineWidth: 4)
                     .frame(width: 200, height: 200)
+
+                Text("ここにQRをあわせてね")
+                    .foregroundStyle(.white)
+                    .font(.system(size: 12, weight: .bold))
+                    .offset(y: 120)
+            }
+
+            if viewModel.isProcessing {
+                ProgressView("よみこみ中")
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
             }
 
             if let result = viewModel.scanResult {
@@ -150,13 +160,11 @@ struct QRCheckView: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .frame(maxWidth: .infinity)
-        .background(result.isSuccess ? Color(red: 0.30, green: 0.72, blue: 0.42) : Color.orange)
+        .background(result.isSuccess ? AppColors.primary : Color.orange)
         .clipShape(RoundedRectangle(cornerRadius: 14))
         .padding(.horizontal)
         .onTapGesture { viewModel.clearScanResult() }
     }
-
-    // MARK: - 完食演出（完食者側で残高が増えたら）
 
     private var celebrationOverlay: some View {
         ZStack {
@@ -169,7 +177,7 @@ struct QRCheckView: View {
             VStack(spacing: 24) {
                 Text("完食達成！")
                     .font(.system(size: 48, weight: .black, design: .rounded))
-                    .foregroundStyle(.red)
+                    .foregroundStyle(AppColors.primaryLight)
                     .shadow(color: .white, radius: 2)
                     .scaleEffect(confettiAnimate ? 1.1 : 0.6)
 
@@ -177,25 +185,26 @@ struct QRCheckView: View {
                     .font(.system(size: 30, weight: .heavy, design: .rounded))
                     .foregroundStyle(.white)
 
-                Text("🍙")
-                    .font(.system(size: 72))
+                Text("おにぎり")
+                    .font(.system(size: 32, weight: .black, design: .rounded))
+                    .foregroundStyle(.white)
                     .rotationEffect(.degrees(confettiAnimate ? 360 : 0))
 
                 Text("いまのポイント \(viewModel.balance) P")
                     .font(.system(size: 18, weight: .bold, design: .rounded))
-                    .foregroundStyle(.yellow)
+                    .foregroundStyle(AppColors.primaryLight)
 
                 Button {
                     viewModel.dismissCelebration()
                 } label: {
-                    Text("つぎへすすむ ➔")
+                    Text("つぎへすすむ")
                         .font(.system(size: 20, weight: .black, design: .rounded))
                         .foregroundStyle(.white)
                         .padding(.vertical, 16)
                         .padding(.horizontal, 40)
-                        .background(Color(customHex: "4ECDC4"))
+                        .background(AppColors.primary)
                         .clipShape(Capsule())
-                        .shadow(color: Color(customHex: "4ECDC4").opacity(0.4), radius: 10, y: 5)
+                        .shadow(color: AppColors.primary.opacity(0.4), radius: 10, y: 5)
                 }
             }
         }
@@ -207,21 +216,6 @@ struct QRCheckView: View {
             }
         }
         .onDisappear { confettiAnimate = false }
-    }
-}
-
-extension Color {
-    init(customHex: String) {
-        let hex = customHex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
-        var int: UInt64 = 0
-        Scanner(string: hex).scanHexInt64(&int)
-        let r, g, b: UInt64
-        switch hex.count {
-        case 3: (r, g, b) = ((int >> 8) * 17, (int >> 4 & 0xF) * 17, (int & 0xF) * 17)
-        case 6: (r, g, b) = (int >> 16, int >> 8 & 0xFF, int & 0xFF)
-        default: (r, g, b) = (1, 1, 1)
-        }
-        self.init(.sRGB, red: Double(r) / 255, green: Double(g) / 255, blue: Double(b) / 255, opacity: 1)
     }
 }
 

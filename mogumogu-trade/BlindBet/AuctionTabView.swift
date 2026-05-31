@@ -46,8 +46,12 @@ struct AuctionTabView: View {
                 .foregroundStyle(AppColors.darkText)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
-                .background(Color.white)
+                .background(AppColors.card)
                 .clipShape(Capsule())
+                .overlay(
+                    Capsule()
+                        .stroke(AppColors.primaryLight.opacity(0.45), lineWidth: 2)
+                )
             }
             .frame(maxWidth: .infinity)
             .padding(24)

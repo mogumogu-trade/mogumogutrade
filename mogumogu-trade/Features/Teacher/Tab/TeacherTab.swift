@@ -1,23 +1,24 @@
 import SwiftUI
 
 struct TeacherDashboardView: View {
+    let classId: String
 
     var body: some View {
         TabView {
 
-            AuctionManageView()
+            AuctionManageView(classCode: classId)
                 .tabItem {
                     Image(systemName: "bell.badge.fill")
                     Text("開催")
                 }
 
-            StudentsInformationView()
+            StudentsInformationView(viewModel: StudentsInformationViewModel(classId: classId))
                 .tabItem {
                     Image(systemName: "person.2.fill")
                     Text("生徒")
                 }
 
-          //  HistoryView()
+            HistoryView()
                 .tabItem {
                     Image(systemName: "clock.arrow.circlepath")
                     Text("履歴")
@@ -28,5 +29,5 @@ struct TeacherDashboardView: View {
 }
 
 #Preview {
-    TeacherDashboardView()
+    TeacherDashboardView(classId: "123456")
 }
