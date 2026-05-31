@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct TeacherDashboardView: View {
+    let classId: String
 
     var body: some View {
         TabView {
@@ -11,7 +12,7 @@ struct TeacherDashboardView: View {
                     Text("開催")
                 }
 
-            StudentsInformationView()
+            StudentsInformationView(viewModel: StudentsInformationViewModel(classId: classId))
                 .tabItem {
                     Image(systemName: "person.2.fill")
                     Text("生徒")
@@ -28,5 +29,5 @@ struct TeacherDashboardView: View {
 }
 
 #Preview {
-    TeacherDashboardView()
+    TeacherDashboardView(classId: "123456")
 }

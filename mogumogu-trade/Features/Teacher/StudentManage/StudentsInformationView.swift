@@ -3,7 +3,7 @@ import FirebaseCore
 
 struct StudentsInformationView: View {
     
-    @State private var viewModel =  StudentsInformationViewModel()
+    @State var viewModel:  StudentsInformationViewModel
     
     
     var body: some View {
@@ -37,5 +37,5 @@ struct StudentsInformationView: View {
 }
 
 #Preview {
-    StudentsInformationView()
+    StudentsInformationView(viewModel: StudentsInformationViewModel(classId: "123456"))
 }
