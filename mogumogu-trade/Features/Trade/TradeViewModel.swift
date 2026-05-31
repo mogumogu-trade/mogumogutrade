@@ -29,7 +29,7 @@ final class TradeViewModel {
     ) {
         @Dependency(\.date.now) var now
         self.profile = profile
-        self.mealDate = mealDate ?? Self.mealDateString(for: now)
+        self.mealDate = mealDate ?? MealDate.string(for: now)
         self.currentStudent = StudentSummary(profile: profile)
         self.offers = offers ?? []
     }
@@ -173,17 +173,6 @@ final class TradeViewModel {
 
         match = latestMatch
         message = "トレード成立！"
-    }
-
-    private static func mealDateString(for date: Date) -> String {
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.year, .month, .day], from: date)
-        return String(
-            format: "%04d-%02d-%02d",
-            components.year ?? 0,
-            components.month ?? 0,
-            components.day ?? 0
-        )
     }
 }
 

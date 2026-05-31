@@ -1,143 +1,214 @@
+import Dependencies
 import SwiftUI
 
 struct QRCheckView: View {
-    @StateObject private var viewModel = QRCheckViewModel()
+    @State private var viewModel: QRCheckViewModel
+    @State private var confettiAnimate = false
+
+    init(profile: StudentProfile) {
+        _viewModel = State(initialValue: QRCheckViewModel(profile: profile))
+    }
 
     var body: some View {
+        @Bindable var viewModel = viewModel
+
         ZStack {
-            NavigationView {
-                VStack {
-                    Picker("モード", selection: $viewModel.selectedTab) {
-                        Text("QRをみせる").tag(0)
-                        Text("QRをよむ").tag(1)
-                    }
-                    .pickerStyle(SegmentedPickerStyle())
-                    .padding()
-                    
-                    if viewModel.selectedTab == 0 {
-                        // ==================== 【みせる側】 ====================
-                        VStack(spacing: 20) {
-                            Text("友だちのトレイがピカピカなら\nQRコードをみせてあげよう！")
-                                .font(.system(size: 14, weight: .bold))
-                                .multilineTextAlignment(.center)
-                                .foregroundColor(.gray)
-                                .padding()
-                            
-                            if let qrImage = viewModel.generateQRCode(from: viewModel.qrTokenString) {
-                                Image(uiImage: qrImage)
-                                    .resizable()
-                                    .interpolation(.none)
-                                    .frame(width: 200, height: 200)
-                                    .padding(20)
-                                    .background(Color.white)
-                                    .cornerRadius(16)
-                                    .shadow(radius: 5)
-                            }
-                        }
-                        .padding(.top, 40)
-                        
-                    } else {
-                        // ==================== 【よむ側：カメラ起動】 ====================
-                        VStack(spacing: 20) {
-                            Text("友だちのスマホのQRコードを\nカメラでうつしてね！")
-                                .font(.system(size: 16, weight: .bold))
-                                .foregroundColor(.gray)
-                            
-                            ZStack {
-                                // 📸 本物のカメラ映像
-                                QRScannerCameraView { scannedCode in
-                                    viewModel.onScanSuccess(scannedCode: scannedCode)
-                                }
-                                .frame(width: 280, height: 280)
-                                .cornerRadius(24)
-                                .shadow(radius: 10)
-                                
-                                // スキャン枠（ミントグリーン）
-                                RoundedRectangle(cornerRadius: 16)
-                                    .stroke(Color(customHex: "4ECDC4"), lineWidth: 4)
-                                    .frame(width: 200, height: 200)
-                                
-                                Text("ここにQRをあわせてね")
-                                    .foregroundColor(.white)
-                                    .font(.system(size: 12, weight: .bold))
-                                    .offset(y: 120)
-                            }
-                        }
-                        .padding(.top, 40)
-                    }
-                    Spacer()
+            Color(red: 0.95, green: 0.96, blue: 0.98).ignoresSafeArea()
+
+            VStack(spacing: 16) {
+                balanceHeader
+
+                Picker("モード", selection: $viewModel.mode) {
+                    Text("QRをみせる").tag(QRCheckViewModel.Mode.show)
+                    Text("QRをよむ").tag(QRCheckViewModel.Mode.read)
                 }
-                .navigationTitle("かんしょくチェック")
-                .navigationBarTitleDisplayMode(.inline)
+                .pickerStyle(.segmented)
+                .padding(.horizontal)
+
+                switch viewModel.mode {
+                case .show:
+                    showSection
+                case .read:
+                    readSection
+                }
+
+                Spacer()
             }
-            .onAppear {
-                viewModel.startLaserAnimation()
+            .padding(.top)
+
+            if viewModel.showCelebration {
+                celebrationOverlay
+            }
+        }
+        .navigationTitle("かんしょくチェック")
+        .navigationBarTitleDisplayMode(.inline)
+        .task { await viewModel.observeBalance() }
+        .onAppear { viewModel.refreshDisplayQR() }
+        .onChange(of: viewModel.mode) { _, newMode in
+            viewModel.clearScanResult()
+            if newMode == .show { viewModel.refreshDisplayQR() }
+        }
+    }
+
+    // MARK: - 残高
+
+    private var balanceHeader: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "star.circle.fill")
+                .foregroundStyle(.orange)
+            Text("いまのポイント \(viewModel.balance) P")
+                .font(.system(size: 18, weight: .black, design: .rounded))
+                .foregroundStyle(Color(red: 0.31, green: 0.22, blue: 0.18))
+        }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 10)
+        .background(Color.white)
+        .clipShape(Capsule())
+        .shadow(color: .black.opacity(0.06), radius: 4, y: 2)
+    }
+
+    // MARK: - みせる（完食者）
+
+    private var showSection: some View {
+        VStack(spacing: 16) {
+            Text("トレイがピカピカになったら\nこのQRを 友だちに よみとってもらおう！")
+                .font(.system(size: 14, weight: .bold))
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
+
+            Group {
+                if let qrImage = viewModel.qrImage {
+                    Image(uiImage: qrImage)
+                        .resizable()
+                        .interpolation(.none)
+                        .frame(width: 220, height: 220)
+                        .padding(20)
+                        .background(Color.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .shadow(radius: 5)
+                } else {
+                    ProgressView()
+                        .frame(width: 260, height: 260)
+                }
             }
 
-            // ==================== 🌟 お祝いエフェクト ====================
-            if viewModel.isShowingCelebration {
-                Color.black.opacity(0.85)
-                    .ignoresSafeArea()
-                    .transition(.opacity)
+            Text("\(viewModel.profile.studentNumber)番 \(viewModel.profile.nickname)")
+                .font(.system(size: 15, weight: .bold, design: .rounded))
+                .foregroundStyle(.secondary)
 
-                ForEach(0..<30, id: \.self) { index in
-                    ConfettiPieceView(animate: viewModel.confettiAnimate, index: index)
+            Button {
+                viewModel.refreshDisplayQR()
+            } label: {
+                Label("QRをつくりなおす", systemImage: "arrow.clockwise")
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+            }
+        }
+        .padding()
+    }
+
+    // MARK: - よむ（確認者）
+
+    private var readSection: some View {
+        VStack(spacing: 16) {
+            Text("友だちのQRコードを\nカメラで よみとってね！")
+                .font(.system(size: 14, weight: .bold))
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
+
+            ZStack {
+                QRScannerCameraView { code in
+                    Task { await viewModel.onScan(code) }
                 }
+                .frame(width: 260, height: 260)
+                .clipShape(RoundedRectangle(cornerRadius: 24))
+                .shadow(radius: 10)
 
-                VStack(spacing: 30) {
-                    Spacer()
-                    
-                    Text("完食達成！")
-                        .font(.system(size: 54, weight: .black, design: .rounded))
-                        .foregroundColor(.red)
-                        .shadow(color: .white, radius: 2)
-                        .scaleEffect(viewModel.confettiAnimate ? 1.1 : 0.5)
-                    
-                    Text("50pt ゲット！")
-                        .font(.system(size: 32, weight: .heavy, design: .rounded))
-                        .foregroundColor(.white)
-                        .padding(.bottom, 20)
-                    
-                    ZStack {
-                        Circle()
-                            .fill(Color.white.opacity(0.2))
-                            .frame(width: 140, height: 140)
-                            .scaleEffect(viewModel.confettiAnimate ? 1.2 : 0.8)
-                        
-                        Text("🍙")
-                            .font(.system(size: 80))
-                            .rotationEffect(.degrees(viewModel.confettiAnimate ? 360 : 0))
-                    }
-                    
-                    Text("いまのポイント: \(viewModel.pointsForAnimation) pt")
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
-                        .foregroundColor(.yellow)
-                    
-                    Spacer()
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color(customHex: "4ECDC4"), lineWidth: 4)
+                    .frame(width: 200, height: 200)
+            }
 
-                    Button(action: {
-                        viewModel.resetCelebration()
-                    }) {
-                        Text("つぎへすすむ ➔")
-                            .font(.system(size: 20, weight: .black, design: .rounded))
-                            .foregroundColor(.white)
-                            .padding(.vertical, 16)
-                            .padding(.horizontal, 40)
-                            .background(Color(customHex: "4ECDC4"))
-                            .cornerRadius(50)
-                            .shadow(color: Color(customHex: "4ECDC4").opacity(0.4), radius: 10, x: 0, y: 5)
-                    }
-                    .padding(.bottom, 50)
-                }
-                .zIndex(1)
-                .onAppear {
-                    viewModel.startConfettiAnimation()
+            if let result = viewModel.scanResult {
+                resultBanner(result)
+            }
+        }
+        .padding()
+    }
+
+    private func resultBanner(_ result: QRCheckViewModel.ScanResult) -> some View {
+        VStack(spacing: 4) {
+            HStack(spacing: 8) {
+                Image(systemName: result.isSuccess ? "checkmark.seal.fill" : "exclamationmark.triangle.fill")
+                Text(result.message)
+                    .font(.system(size: 15, weight: .bold, design: .rounded))
+            }
+            Text("タップで つづける")
+                .font(.system(size: 11, weight: .bold))
+                .opacity(0.85)
+        }
+        .foregroundStyle(.white)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .frame(maxWidth: .infinity)
+        .background(result.isSuccess ? Color(red: 0.30, green: 0.72, blue: 0.42) : Color.orange)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .padding(.horizontal)
+        .onTapGesture { viewModel.clearScanResult() }
+    }
+
+    // MARK: - 完食演出（完食者側で残高が増えたら）
+
+    private var celebrationOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.85).ignoresSafeArea()
+
+            ForEach(0..<30, id: \.self) { index in
+                ConfettiPieceView(animate: confettiAnimate, index: index)
+            }
+
+            VStack(spacing: 24) {
+                Text("完食達成！")
+                    .font(.system(size: 48, weight: .black, design: .rounded))
+                    .foregroundStyle(.red)
+                    .shadow(color: .white, radius: 2)
+                    .scaleEffect(confettiAnimate ? 1.1 : 0.6)
+
+                Text("+1P ゲット！")
+                    .font(.system(size: 30, weight: .heavy, design: .rounded))
+                    .foregroundStyle(.white)
+
+                Text("🍙")
+                    .font(.system(size: 72))
+                    .rotationEffect(.degrees(confettiAnimate ? 360 : 0))
+
+                Text("いまのポイント \(viewModel.balance) P")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundStyle(.yellow)
+
+                Button {
+                    viewModel.dismissCelebration()
+                } label: {
+                    Text("つぎへすすむ ➔")
+                        .font(.system(size: 20, weight: .black, design: .rounded))
+                        .foregroundStyle(.white)
+                        .padding(.vertical, 16)
+                        .padding(.horizontal, 40)
+                        .background(Color(customHex: "4ECDC4"))
+                        .clipShape(Capsule())
+                        .shadow(color: Color(customHex: "4ECDC4").opacity(0.4), radius: 10, y: 5)
                 }
             }
         }
+        .transition(.opacity)
+        .onAppear {
+            confettiAnimate = false
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.5)) {
+                confettiAnimate = true
+            }
+        }
+        .onDisappear { confettiAnimate = false }
     }
 }
-
 
 extension Color {
     init(customHex: String) {
@@ -151,5 +222,23 @@ extension Color {
         default: (r, g, b) = (1, 1, 1)
         }
         self.init(.sRGB, red: Double(r) / 255, green: Double(g) / 255, blue: Double(b) / 255, opacity: 1)
+    }
+}
+
+#Preview("正常（残高あり）") {
+    NavigationStack {
+        withDependencies {
+            $0.mileageClient.observeBalance = { _, _ in
+                AsyncThrowingStream { $0.yield(3); $0.finish() }
+            }
+        } operation: {
+            QRCheckView(profile: StudentProfile(classId: "123456", studentNumber: 12, nickname: "もぐ"))
+        }
+    }
+}
+
+#Preview("残高0") {
+    NavigationStack {
+        QRCheckView(profile: StudentProfile(classId: "123456", studentNumber: 12, nickname: "もぐ"))
     }
 }
