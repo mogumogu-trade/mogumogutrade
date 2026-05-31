@@ -9,6 +9,11 @@ import Foundation
 final class AllergyRegistrationViewModel {
     let classId: String
 
+    /// 単一生徒モードで編集対象とする出席番号。nil ならクラス全員から選ぶ従来モード。
+    let focusedStudentNumber: Int?
+    /// 単一生徒モードでの表示名（名簿読込前のフォールバック用）。
+    private let focusedStudentName: String?
+
     private(set) var roster: [StudentAllergy] = []
     private(set) var selectedStudentNumber: Int?
     private(set) var isLoading = false
@@ -18,8 +23,26 @@ final class AllergyRegistrationViewModel {
 
     @ObservationIgnored @Dependency(\.allergyClient) private var allergyClient
 
-    init(classId: String) {
+    init(
+        classId: String,
+        focusedStudentNumber: Int? = nil,
+        focusedStudentName: String? = nil
+    ) {
         self.classId = classId
+        self.focusedStudentNumber = focusedStudentNumber
+        self.focusedStudentName = focusedStudentName
+        self.selectedStudentNumber = focusedStudentNumber
+    }
+
+    /// 生徒一覧からタップして特定生徒だけを編集するモードか。
+    var isSingleStudentMode: Bool { focusedStudentNumber != nil }
+
+    /// 単一生徒モードで画面に出す対象生徒の表示名。名簿読込前は引数のフォールバックを使う。
+    var focusedDisplayName: String {
+        if let selectedStudent { return selectedStudent.displayName }
+        guard let focusedStudentNumber else { return "" }
+        let name = focusedStudentName ?? ""
+        return name.isEmpty ? "\(focusedStudentNumber)番" : "\(focusedStudentNumber)番 \(name)"
     }
 
     var selectedStudent: StudentAllergy? {
@@ -42,7 +65,19 @@ final class AllergyRegistrationViewModel {
         defer { isLoading = false }
         do {
             roster = try await allergyClient.loadRoster(classId: classId)
-            if selectedStudentNumber == nil {
+            if let focusedStudentNumber {
+                // 単一生徒モード: 名簿に未登録でも編集できるよう仮エントリを補う。
+                if !roster.contains(where: { $0.studentNumber == focusedStudentNumber }) {
+                    roster.append(
+                        StudentAllergy(
+                            studentNumber: focusedStudentNumber,
+                            nickname: focusedStudentName ?? "",
+                            allergens: []
+                        )
+                    )
+                }
+                selectedStudentNumber = focusedStudentNumber
+            } else if selectedStudentNumber == nil {
                 selectedStudentNumber = roster.first?.studentNumber
             }
         } catch {
