@@ -17,7 +17,7 @@ v1 ではクライアント側で検証しているが、AGENTS.md 方針どお�
 | `studentNumber` | 12 | 対象（完食者）の出席番号。主識別子 |
 | `studentNickname` | "もぐ" | 表示補助 |
 | `amount` | 1 | 符号つき増減。完食=+1 |
-| `type` | "mealCompletion" | mealCompletion / auctionWin / teacherCancel |
+| `type` | "mealCompletion" | mealCompletion / auctionParticipation / auctionWin / teacherCancel |
 | `approverNumber` | 8 | 完食を承認した確認者の出席番号（QR由来） |
 | `approverNickname` | "はる" | 表示補助 |
 | `mealDate` | "2026-05-31" | 給食日 |
@@ -57,5 +57,5 @@ match /classes/{classId}/pointLedger/{ledgerId} {
 }
 ```
 
-- ポイント消費（オークション落札）や教員の取り消しは、別途トランザクション／Cloud Functions で整合性を担保する。
-- `auctionWin` / `teacherCancel` の作成条件は、それぞれの機能実装時に追加する。
+- オークションの参加費・落札消費は `docs/firestore-auctions.md` の transaction 方針に従う。
+- `teacherCancel` の作成条件は、教員取り消し機能の実装時に追加する。

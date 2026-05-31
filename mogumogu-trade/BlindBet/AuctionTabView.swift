@@ -6,13 +6,19 @@ struct AuctionTabView: View {
     var body: some View {
         Group {
             if let activeRoom = viewModel.activeRoom {
-                BetView(room: activeRoom, pointBalance: $viewModel.pointBalance)
+                BetView(room: activeRoom, viewModel: viewModel)
             } else {
                 auctionEmptyState
             }
         }
         .navigationTitle("オークション")
         .navigationBarTitleDisplayMode(.inline)
+        .task(id: viewModel.activeRoom?.id) {
+            await viewModel.observeMyBidForActiveRoom()
+        }
+        .task(id: viewModel.activeRoom?.id) {
+            await viewModel.observeResultForActiveRoom()
+        }
     }
 
     private var auctionEmptyState: some View {

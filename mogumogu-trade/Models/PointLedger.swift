@@ -6,7 +6,9 @@ import Foundation
 enum PointEntryType: String, Codable, Sendable {
     /// 完食マイレージの付与。
     case mealCompletion
-    /// オークション落札による消費（将来）。
+    /// オークション初回入札時の参加費。
+    case auctionParticipation
+    /// オークション落札による消費。
     case auctionWin
     /// 教員によるポイント取り消し（将来）。
     case teacherCancel

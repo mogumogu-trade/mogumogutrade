@@ -2,7 +2,6 @@ import SwiftUI
 
 struct WinView: View {
     let lastBetAmount: Int // 表示するだけなので Binding ではなく let でOK
-    @Binding var screenState: String
     
     // この画面専用のアニメーションスイッチ
     @State private var isFloating = false
@@ -56,14 +55,14 @@ struct WinView: View {
                 .cornerRadius(15)
                 .padding(.top, 5)
                 
-                Button(action: { screenState = "bet" }) {
-                    Text("次のゲームへ")
-                        .font(.system(size: 16, weight: .bold, design: .rounded))
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 20).padding(.vertical, 10)
-                        .background(AppColors.darkText).cornerRadius(12)
-                }
-                .padding(.top, 5)
+                Text("先生に受け取りに行ってね")
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(AppColors.darkText)
+                    .cornerRadius(12)
+                    .padding(.top, 5)
             }
             .padding(20)
         }

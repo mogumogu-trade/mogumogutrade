@@ -1,8 +1,7 @@
 import SwiftUI
 
 struct WaitingView: View {
-    @Binding var lastBetAmount: Int
-    @Binding var screenState: String
+    let lastBetAmount: Int
     
     // この画面専用のアニメーションスイッチ
     @State private var isRotating = false
@@ -26,6 +25,8 @@ struct WaitingView: View {
                 .padding(.vertical, 20)
             
             VStack(spacing: 5) {
+                Text("\(lastBetAmount)Pで ベット中")
+                    .font(.system(size: 18, weight: .black, design: .rounded))
                 Text("先生が締め切るまで")
                 Text("しずかに待ってね… 🤫")
             }
