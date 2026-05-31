@@ -137,9 +137,10 @@ final class TradeViewModel {
         }
 
         acceptingOfferId = id
+        match = nil
+        message = nil
         errorMessage = nil
         defer { acceptingOfferId = nil }
-
         do {
             let newMatch = try await tradeClient.acceptOffer(
                 profile.classId,
