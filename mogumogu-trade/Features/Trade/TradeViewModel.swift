@@ -1,6 +1,13 @@
 import Dependencies
 import Foundation
 
+/// 出品の結果バナー／演出の出し分けに使う種別。
+enum TradeResultKind: Sendable {
+    case matched   // トレード成立
+    case queued    // まだ合う人がいない（出品リストに入った）
+    case cancelled // 出品を取り消した
+}
+
 @Observable
 @MainActor
 final class TradeViewModel {
@@ -12,15 +19,18 @@ final class TradeViewModel {
     var selectedRequesting: TradeCondition = .greenPepper
     private(set) var offers: [TradeOffer]
     private(set) var match: TradeMatch?
+    private(set) var resultKind: TradeResultKind?
     private(set) var message: String?
     private(set) var errorMessage: String?
     private(set) var isLoading: Bool = false
     private(set) var isSubmitting: Bool = false
+    private(set) var myAllergens: Set<Allergen> = []
     private var isObserving: Bool = false
     private var dismissedMatchIds: Set<String> = []
 
     @ObservationIgnored @Dependency(\.tradeClient) private var tradeClient
     @ObservationIgnored @Dependency(\.uuid) private var uuid
+    @ObservationIgnored @Dependency(\.allergyClient) private var allergyClient
 
     init(
         profile: StudentProfile,
@@ -38,14 +48,24 @@ final class TradeViewModel {
         offers.filter { $0.status == .open }
     }
 
+    var allergyBlockReason: String? {
+        AllergyChecker.blockReason(foodID: selectedRequesting.id, recipientAllergens: myAllergens)
+    }
+
     var canSubmit: Bool {
-        selectedOffering != selectedRequesting
+        selectedOffering != selectedRequesting && allergyBlockReason == nil
     }
 
     func observeOffers() async {
         guard !isObserving else { return }
         isObserving = true
         isLoading = offers.isEmpty
+        
+        if let roster = try? await allergyClient.loadRoster(profile.classId),
+           let me = roster.first(where: { $0.studentNumber == currentStudent.attendanceNumber }) {
+            myAllergens = me.allergens
+        }
+
         defer {
             isObserving = false
             isLoading = false
@@ -84,15 +104,18 @@ final class TradeViewModel {
             case let .queued(offer):
                 upsert(offer)
                 match = nil
+                resultKind = .queued
                 message = "まだ合う人がいないよ"
             case let .matched(newMatch):
                 upsert(newMatch.myOffer)
                 upsert(newMatch.partnerOffer)
                 match = newMatch
+                resultKind = .matched
                 message = "トレード成立！"
             }
         } catch {
             match = nil
+            resultKind = nil
             message = nil
             errorMessage = "出品できませんでした"
         }
@@ -103,6 +126,7 @@ final class TradeViewModel {
             dismissedMatchIds.insert(match.id)
         }
         match = nil
+        resultKind = nil
         message = nil
     }
 
@@ -117,6 +141,7 @@ final class TradeViewModel {
             try await tradeClient.cancelOffer(profile.classId, mealDate, id, currentStudent)
             offers.remove(at: offerIndex)
             match = nil
+            resultKind = .cancelled
             message = "出品を取り消したよ"
             errorMessage = nil
         } catch {
@@ -129,6 +154,7 @@ final class TradeViewModel {
         selectedRequesting = .greenPepper
         offers = Self.sampleOffers
         match = nil
+        resultKind = nil
         message = nil
         errorMessage = nil
     }
@@ -172,6 +198,7 @@ final class TradeViewModel {
         }
 
         match = latestMatch
+        resultKind = .matched
         message = "トレード成立！"
     }
 }
@@ -204,3 +231,45 @@ extension TradeViewModel {
         ),
     ]
 }
+
+#if DEBUG
+extension TradeViewModel {
+    /// プレビュー用：成立済みの状態を直接シードする（`private(set)` は同一ファイル内なので設定可）。
+    static func previewMatched() -> TradeViewModel {
+        let vm = TradeViewModel(profile: StudentProfile(classId: "123456", studentNumber: 12, nickname: "もぐ"))
+        let mine = TradeOffer(
+            id: "me",
+            mealDate: vm.mealDate,
+            seller: vm.currentStudent,
+            offering: .tomato,
+            requesting: .greenPepper,
+            status: .matched,
+            matchedOfferId: "partner",
+            matchedAt: Date()
+        )
+        let partner = TradeOffer(
+            id: "partner",
+            mealDate: vm.mealDate,
+            seller: StudentSummary(attendanceNumber: 8, nickname: "はる"),
+            offering: .greenPepper,
+            requesting: .tomato,
+            status: .matched,
+            matchedOfferId: "me",
+            matchedAt: Date()
+        )
+        vm.offers = [mine, partner]
+        vm.match = TradeMatch(id: "me-partner", myOffer: mine, partnerOffer: partner, matchedAt: Date())
+        vm.resultKind = .matched
+        vm.message = "トレード成立！"
+        return vm
+    }
+
+    /// プレビュー用：出品はしたがまだ成立していない状態。
+    static func previewQueued() -> TradeViewModel {
+        let vm = TradeViewModel(profile: StudentProfile(classId: "123456", studentNumber: 12, nickname: "もぐ"))
+        vm.resultKind = .queued
+        vm.message = "まだ合う人がいないよ"
+        return vm
+    }
+}
+#endif
