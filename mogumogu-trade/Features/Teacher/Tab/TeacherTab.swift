@@ -18,7 +18,6 @@ struct TeacherDashboardView: View {
                     Text("生徒")
                 }
 
-
         }
     }
 }
