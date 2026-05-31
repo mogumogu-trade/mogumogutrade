@@ -16,13 +16,14 @@ struct HomeView: View {
                     NavigationLink {
                         AuctionTabView(viewModel: AuctionViewModel(profile: viewModel.profile))
                     } label: {
-                        Text("ベットへ いく")
+                        Label("ベットへ いく", systemImage: "crown.fill")
                             .font(.system(size: 16, weight: .bold, design: .rounded))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
-                            .background(Color(red: 0.18, green: 0.18, blue: 0.18))
+                            .background(AppColors.primary)
                             .foregroundStyle(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                            .clipShape(RoundedRectangle(cornerRadius: 18))
+                            .shadow(color: AppColors.primary.opacity(0.28), radius: 8, x: 0, y: 4)
                     }
                     NavigationLink {
                         QRCheckView(profile: viewModel.profile)
@@ -33,10 +34,10 @@ struct HomeView: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 14)
-                        .background(Color(red: 0.31, green: 0.80, blue: 0.77))
+                        .background(AppColors.accent)
                         .foregroundStyle(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                        .shadow(color: Color(red: 0.31, green: 0.80, blue: 0.77).opacity(0.3), radius: 6, x: 0, y: 3)
+                        .clipShape(RoundedRectangle(cornerRadius: 18))
+                        .shadow(color: AppColors.accent.opacity(0.3), radius: 6, x: 0, y: 3)
                     }
 
                     // 先生用導線（暫定）。将来は先生モードのゲート配下へ移す。
@@ -56,7 +57,7 @@ struct HomeView: View {
                 }
                 .padding(24)
             }
-            .background(Color(red: 0.95, green: 0.96, blue: 0.98).ignoresSafeArea())
+            .background(AppColors.bg.ignoresSafeArea())
             .navigationTitle("もぐもぐトレード")
             .navigationBarTitleDisplayMode(.inline)
         }
@@ -66,7 +67,7 @@ struct HomeView: View {
         HStack {
             Image(systemName: "person.crop.circle.fill")
                 .font(.system(size: 36))
-                .foregroundStyle(Color(red: 0.47, green: 0.33, blue: 0.28))
+                .foregroundStyle(AppColors.primary)
             VStack(alignment: .leading, spacing: 2) {
                 Text(viewModel.displayName)
                     .font(.system(size: 18, weight: .black, design: .rounded))
@@ -77,11 +78,11 @@ struct HomeView: View {
             Spacer()
         }
         .padding(16)
-        .background(Color.white)
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .background(AppColors.card)
+        .clipShape(RoundedRectangle(cornerRadius: 22))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.black.opacity(0.06), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 22)
+                .stroke(AppColors.primaryLight.opacity(0.45), lineWidth: 2)
         )
     }
 
@@ -89,7 +90,7 @@ struct HomeView: View {
         VStack(spacing: 12) {
             Image(systemName: "arrow.left.arrow.right.circle.fill")
                 .font(.system(size: 42))
-                .foregroundStyle(Color(red: 0.47, green: 0.33, blue: 0.28))
+                .foregroundStyle(AppColors.primary)
             Text("出品してみよう")
                 .font(.system(size: 18, weight: .black, design: .rounded))
             Text("わたすものと ほしいものを えらぶよ")
@@ -103,15 +104,20 @@ struct HomeView: View {
                     .font(.system(size: 16, weight: .bold, design: .rounded))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(Color(red: 0.18, green: 0.18, blue: 0.18))
+                    .background(AppColors.primary)
                     .foregroundStyle(.white)
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                    .clipShape(RoundedRectangle(cornerRadius: 18))
+                    .shadow(color: AppColors.primary.opacity(0.28), radius: 8, x: 0, y: 4)
             }
         }
         .frame(maxWidth: .infinity)
         .padding(18)
-        .background(Color.white.opacity(0.8))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .background(AppColors.card)
+        .clipShape(RoundedRectangle(cornerRadius: 22))
+        .overlay(
+            RoundedRectangle(cornerRadius: 22)
+                .stroke(AppColors.primaryLight.opacity(0.45), lineWidth: 2)
+        )
     }
 }
 

@@ -61,7 +61,8 @@ struct WinView: View {
                         .font(.system(size: 16, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
                         .padding(.horizontal, 20).padding(.vertical, 10)
-                        .background(AppColors.darkText).cornerRadius(12)
+                        .background(AppColors.primary).cornerRadius(14)
+                        .shadow(color: AppColors.primary.opacity(0.32), radius: 8, x: 0, y: 4)
                 }
                 .padding(.top, 5)
             }

@@ -1,5 +1,31 @@
 import SwiftUI
 
+struct HistoryView: View {
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 12) {
+                Image(systemName: "clock.arrow.circlepath")
+                    .font(.system(size: 44))
+                    .foregroundStyle(TeacherColors.chocoLight)
+
+                Text("履歴はまだありません")
+                    .font(.system(size: 20, weight: .heavy, design: .rounded))
+                    .foregroundStyle(TeacherColors.choco)
+
+                Text("オークションが終わったら、ここで見られます")
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .foregroundStyle(TeacherColors.textLight)
+                    .multilineTextAlignment(.center)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(24)
+            .background(TeacherColors.bgGray.ignoresSafeArea())
+            .navigationTitle("履歴")
+            .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+}
+
 //// MARK: - 履歴画面
 //struct HistoryView: View {
 //    var body: some View {

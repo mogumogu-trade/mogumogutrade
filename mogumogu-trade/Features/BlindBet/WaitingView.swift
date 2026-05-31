@@ -12,7 +12,7 @@ struct WaitingView: View {
             Text("ベット完了！")
                 .font(.system(size: 24, weight: .black, design: .rounded)).foregroundColor(.white)
                 .padding(.horizontal, 20).padding(.vertical, 10)
-                .background(AppColors.darkText).cornerRadius(20)
+                .background(AppColors.primary).cornerRadius(20)
                 .rotationEffect(.degrees(-3))
             
             Image(systemName: "hourglass")
@@ -29,8 +29,8 @@ struct WaitingView: View {
                 Text("先生が締め切るまで")
                 Text("しずかに待ってね… 🤫")
             }
-            .font(.system(size: 16, weight: .bold, design: .rounded)).foregroundColor(AppColors.darkText)
-            .padding(.horizontal, 25).padding(.vertical, 15).background(Color.white).cornerRadius(15)
+                .font(.system(size: 16, weight: .bold, design: .rounded)).foregroundColor(AppColors.darkText)
+            .padding(.horizontal, 25).padding(.vertical, 15).background(AppColors.card).cornerRadius(15)
         }
         .padding(20).frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(AppColors.wait).cornerRadius(15)
