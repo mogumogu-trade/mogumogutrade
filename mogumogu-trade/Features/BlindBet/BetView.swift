@@ -2,7 +2,6 @@ import SwiftUI
 
 struct BettingView: View {
     let room: AuctionRoom
-
     @Binding var pointBalance: Int
     @Binding var betAmountString: String
     @Binding var lastBetAmount: Int
@@ -85,7 +84,9 @@ struct BettingView: View {
             }
             .onChange(of: betAmountString) { _, newValue in
                 let filtered = newValue.filter { "0123456789".contains($0) }
-                if filtered != newValue { betAmountString = filtered }
+                if filtered != newValue {
+                    betAmountString = filtered
+                }
             }
             .padding(.vertical, 10)
 

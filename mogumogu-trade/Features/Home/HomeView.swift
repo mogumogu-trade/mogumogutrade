@@ -26,7 +26,7 @@ struct HomeView: View {
                             .shadow(color: AppColors.primary.opacity(0.28), radius: 8, x: 0, y: 4)
                     }
                     NavigationLink {
-                        QRCheckView()
+                        QRCheckView(profile: viewModel.profile)
                     } label: {
                         HStack {
                             Image(systemName: "qrcode.viewfinder").font(.system(size: 18, weight: .bold))
@@ -38,6 +38,21 @@ struct HomeView: View {
                         .foregroundStyle(.white)
                         .clipShape(RoundedRectangle(cornerRadius: 18))
                         .shadow(color: AppColors.accent.opacity(0.3), radius: 6, x: 0, y: 3)
+                    }
+
+                    // 先生用導線（暫定）。将来は先生モードのゲート配下へ移す。
+                    NavigationLink {
+                        AllergyRegistrationView(
+                            viewModel: AllergyRegistrationViewModel(classId: viewModel.profile.classId)
+                        )
+                    } label: {
+                        Label("先生：アレルギー登録", systemImage: "cross.case.fill")
+                            .font(.system(size: 16, weight: .bold, design: .rounded))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(Color(red: 0.85, green: 0.35, blue: 0.30))
+                            .foregroundStyle(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
                 }
                 .padding(24)
