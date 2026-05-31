@@ -95,8 +95,19 @@ private enum FirestoreMileageService {
         mealDate: String
     ) async throws -> MileageAwardResult {
         let firestore = Firestore.firestore()
+        try await FirestorePointBalanceStore.ensureBalance(
+            classId: classId,
+            studentNumber: eater.attendanceNumber,
+            firestore: firestore
+        )
+
         let ref = ledgerCollection(classId: classId, firestore: firestore)
             .document("meal-\(mealDate)-\(eater.attendanceNumber)")
+        let balanceRef = FirestorePointBalanceStore.pointBalanceDocument(
+            classId: classId,
+            studentNumber: eater.attendanceNumber,
+            firestore: firestore
+        )
 
         let result: Any?
         do {
@@ -105,12 +116,19 @@ private enum FirestoreMileageService {
             result = try await firestore.runTransaction { transaction, errorPointer in
                 do {
                     let snapshot = try transaction.getDocument(ref)
+                    let balanceSnapshot = try transaction.getDocument(balanceRef)
                     if snapshot.exists {
                         return true
                     }
                     transaction.setData(
                         entryData(eater: eater, approver: approver, mealDate: mealDate),
                         forDocument: ref
+                    )
+                    FirestorePointBalanceStore.setBalance(
+                        FirestorePointBalanceStore.balance(from: balanceSnapshot) + 1,
+                        studentNumber: eater.attendanceNumber,
+                        transaction: transaction,
+                        ref: balanceRef
                     )
                     return false
                 } catch let error as NSError {
@@ -157,10 +175,19 @@ private enum FirestoreMileageService {
         studentNumber: Int,
         firestore: Firestore
     ) async throws -> Int {
-        let snapshot = try await ledgerCollection(classId: classId, firestore: firestore)
-            .whereField("studentNumber", isEqualTo: studentNumber)
-            .getDocuments()
-        return total(of: snapshot.documents)
+        try await FirestorePointBalanceStore.ensureBalance(
+            classId: classId,
+            studentNumber: studentNumber,
+            firestore: firestore
+        )
+        let snapshot = try await FirestorePointBalanceStore
+            .pointBalanceDocument(
+                classId: classId,
+                studentNumber: studentNumber,
+                firestore: firestore
+            )
+            .getDocument()
+        return FirestorePointBalanceStore.balance(from: snapshot)
     }
 
     private static func total(of documents: [QueryDocumentSnapshot]) -> Int {

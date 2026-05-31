@@ -45,6 +45,12 @@ struct MainTabView: View {
         .task {
             await tradeViewModel.observeOffers()
         }
+        .task {
+            await auctionViewModel.observeLatestRoom()
+        }
+        .task {
+            await auctionViewModel.observeBalance()
+        }
     }
 }
 

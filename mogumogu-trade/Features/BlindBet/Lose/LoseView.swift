@@ -1,8 +1,6 @@
 import SwiftUI
 
 struct LoseView: View {
-    @Binding var screenState: String
-    
     // この画面専用のアニメーションスイッチ
     @State private var isGlitching = false
     @State private var scanlineOffset: CGFloat = -50
@@ -69,15 +67,14 @@ struct LoseView: View {
             .clipShape(RoundedRectangle(cornerRadius: 15))
             .padding(.top, 10)
             
-            Button(action: { screenState = "bet" }) {
-                Text("ポイントを受け取る")
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 20).padding(.vertical, 10)
-                    .background(AppColors.primary).cornerRadius(14)
-                    .shadow(color: AppColors.primary.opacity(0.32), radius: 8, x: 0, y: 4)
-            }
-            .padding(.top, 5)
+            Text("参加費の5Pは使ったよ")
+                .font(.system(size: 16, weight: .bold, design: .rounded))
+                .foregroundColor(.white)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 10)
+                .background(AppColors.darkText)
+                .cornerRadius(12)
+                .padding(.top, 5)
         }
         .padding(20).frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(AppColors.lose).cornerRadius(15)
