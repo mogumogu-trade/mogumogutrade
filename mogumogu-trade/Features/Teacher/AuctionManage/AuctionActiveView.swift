@@ -2,7 +2,7 @@ import SwiftUI
 
 struct AuctionActiveView: View {
     // こちらも親ファイルからデータをもらうために @Binding を使います
-    @Binding var menus: [AuctionMenu]
+    @Binding var menus: [AuctionActiveModel]
     @Binding var isAuctionActive: Bool
     
     var body: some View {
@@ -11,25 +11,13 @@ struct AuctionActiveView: View {
             // 1. 開催中のアラート表示
             VStack(spacing: 12) {
                 Text("🔥 現在開催中 🔥")
-                    .font(.system(size: 14, weight: .bold))
+                    .font(.system(size: 20, weight: .bold))
                     .foregroundColor(.white)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 6)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
                     .background(Color.red)
                     .cornerRadius(20)
-                
-                Text("生徒たちがベットしています！")
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(Color.red.opacity(0.8))
             }
-            .frame(maxWidth: .infinity)
-            .padding(20)
-            .background(Color.red.opacity(0.1))
-            .cornerRadius(16)
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color.red.opacity(0.2), lineWidth: 2)
-            )
             
             // 2. 出品中のメニューリスト
             VStack(alignment: .leading, spacing: 12) {
@@ -44,9 +32,6 @@ struct AuctionActiveView: View {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(menu.name)
                                         .font(.system(size: 18, weight: .bold))
-                                    Text("残り \(menu.stock) 個")
-                                        .font(.system(size: 13, weight: .medium))
-                                        .foregroundColor(.gray)
                                 }
                                 Spacer()
                                 Text("受付中")

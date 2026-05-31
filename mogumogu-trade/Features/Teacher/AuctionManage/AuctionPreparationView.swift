@@ -2,7 +2,7 @@ import SwiftUI
 
 struct AuctionPreparationView: View {
     // 親ファイル(AuctionManageView)からデータをもらうために @Binding を使います
-    @Binding var menus: [AuctionMenu]
+    @Binding var menus: [AuctionActiveModel]
     @Binding var isAuctionActive: Bool
     
     // この画面の中だけで使う入力用の変数
@@ -48,36 +48,6 @@ struct AuctionPreparationView: View {
                     .cornerRadius(12)
                     .font(.system(size: 16, weight: .bold))
                 
-                HStack {
-                    Text("個数")
-                        .font(.system(size: 13, weight: .bold))
-                        .foregroundColor(.gray)
-                    
-                    HStack(spacing: 0) {
-                        Button(action: {
-                            if newMenuCount > 1 { newMenuCount -= 1 }
-                        }) {
-                            Image(systemName: "minus")
-                                .frame(width: 36, height: 36)
-                                .foregroundColor(.gray)
-                        }
-                        
-                        Text("\(newMenuCount)")
-                            .font(.system(size: 18, weight: .black))
-                            .frame(width: 32)
-                            .multilineTextAlignment(.center)
-                        
-                        Button(action: { newMenuCount += 1 }) {
-                            Image(systemName: "plus")
-                                .frame(width: 36, height: 36)
-                                .foregroundColor(.gray)
-                        }
-                    }
-                    .background(Color(white: 0.96))
-                    .cornerRadius(10)
-                    
-                    Spacer()
-                    
                     Button(action: addMenu) {
                         Text("追加")
                             .font(.system(size: 15, weight: .bold))
@@ -88,7 +58,6 @@ struct AuctionPreparationView: View {
                             .cornerRadius(12)
                     }
                     .disabled(newMenuName.isEmpty)
-                }
             }
             .padding(16)
             .background(Color.white)
@@ -116,9 +85,6 @@ struct AuctionPreparationView: View {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(menu.name)
                                         .font(.system(size: 16, weight: .bold))
-                                    Text("\(menu.stock) 個")
-                                        .font(.system(size: 12, weight: .bold))
-                                        .foregroundColor(.orange)
                                 }
                                 Spacer()
                                 Button(action: { deleteMenu(menu: menu) }) {
@@ -160,12 +126,12 @@ struct AuctionPreparationView: View {
     }
     private func addMenu() {
         guard !newMenuName.isEmpty else { return }
-        menus.append(AuctionMenu(name: newMenuName, stock: newMenuCount))
+        menus.append(AuctionActiveModel(name: newMenuName, stock: newMenuCount))
         newMenuName = ""
         newMenuCount = 1
     }
     
-    private func deleteMenu(menu: AuctionMenu) {
+    private func deleteMenu(menu: AuctionActiveModel) {
         menus.removeAll { $0.id == menu.id }
     }
 }
