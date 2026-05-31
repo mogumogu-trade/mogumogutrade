@@ -13,6 +13,11 @@ struct StudentClient: Sendable {
     var getStudents: @Sendable(
         _ classId: String
     ) async throws -> [Student]
+    
+    var getBids: @Sendable (
+            _ classId: String,
+            _ auctionId: String
+        ) async throws -> [Bid]
 }
 extension StudentClient: DependencyKey {
 
@@ -40,7 +45,8 @@ extension StudentClient: DependencyKey {
             catch{
                 print(error)
             }
-        }, getStudents: { classId in
+        },
+        getStudents: { classId in
             let snapshot = try await Firestore.firestore()
                 .collection("classes")
                 .document(classId)
@@ -49,7 +55,21 @@ extension StudentClient: DependencyKey {
             return snapshot.documents.compactMap { doc in
                 try? doc.data(as: Student.self)
             }
-        }
+        },
+        getBids: { classId, auctionId in
+
+                let snapshot = try await Firestore.firestore()
+                    .collection("classes")
+                    .document(classId)
+                    .collection("auctions")
+                    .document(auctionId)
+                    .collection("bids")
+                    .getDocuments()
+
+                return snapshot.documents.compactMap {
+                    try? $0.data(as: Bid.self)
+                }
+            }
     )
 }
 extension DependencyValues {

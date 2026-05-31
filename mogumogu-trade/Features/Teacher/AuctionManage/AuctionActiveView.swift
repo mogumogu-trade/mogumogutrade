@@ -1,10 +1,14 @@
 import SwiftUI
+import Dependencies
 
 struct AuctionActiveView: View {
     // こちらも親ファイルからデータをもらうために @Binding を使います
     @Binding var menus: [AuctionActiveModel]
     @Binding var isAuctionActive: Bool
+  @State  var bidStudents: [Bid] = []
+    @Binding var classId: String
     
+    @ObservationIgnored @Dependency(\.studentClient) private var studentClient
     var body: some View {
         VStack(spacing: 20) {
             
@@ -50,7 +54,23 @@ struct AuctionActiveView: View {
                         }
                     }
                 }
+                ScrollView{
+                    List{
+                        ForEach(bidStudents) { student in
+                            Text(student.studentNickname)
+                           
+                          
+                            
+                        }
+                    }
+                }
+                .onAppear(){
+                    Task{
+                        await getBidStundents()
+                    }
+                }
             }
+            
             
             Spacer()
             
@@ -73,4 +93,11 @@ struct AuctionActiveView: View {
         .padding(.horizontal, 24)
         .padding(.bottom, 10)
     }
+    func getBidStundents() async{
+          Task{
+             bidStudents = try await studentClient.getBids(classId, menus.first?.id.uuidString ?? "")
+          }
+      }
+    
+ 
 }
