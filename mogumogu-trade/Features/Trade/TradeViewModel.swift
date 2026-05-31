@@ -35,7 +35,7 @@ final class TradeViewModel {
     ) {
         @Dependency(\.date.now) var now
         self.profile = profile
-        self.mealDate = mealDate ?? Self.mealDateString(for: now)
+        self.mealDate = mealDate ?? MealDate.string(for: now)
         self.currentStudent = StudentSummary(profile: profile)
         self.offers = offers ?? []
         self.match = match

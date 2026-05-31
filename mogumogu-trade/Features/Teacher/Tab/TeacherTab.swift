@@ -11,7 +11,7 @@ struct TeacherDashboardView: View {
                     Text("開催")
                 }
 
-     //       StudentManageView(student: )
+            StudentsInformationView()
                 .tabItem {
                     Image(systemName: "person.2.fill")
                     Text("生徒")

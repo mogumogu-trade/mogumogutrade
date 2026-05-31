@@ -25,7 +25,7 @@ struct HomeView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
                     NavigationLink {
-                        QRCheckView()
+                        QRCheckView(profile: viewModel.profile)
                     } label: {
                         HStack {
                             Image(systemName: "qrcode.viewfinder").font(.system(size: 18, weight: .bold))

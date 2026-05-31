@@ -17,13 +17,26 @@
 - 対象デバイス: iPhone / iPad
 - フロントエンド: Swift / SwiftUI
 - 依存性注入: Swift Dependencies
-- ローカルデータ管理予定: SwiftData / UserDefaults
-- バックエンド予定: Firebase Firestore
-- Xcodeプロジェクト: `mogumogu-trade.xcodeproj`
+- ローカルデータ管理: UserDefaults（クラス参加情報・アレルギー名簿など）。SwiftData は未導入
+- バックエンド: Firebase Firestore（導入済み）
+- Xcodeプロジェクト: `mogumogu-trade.xcodeproj`（Xcode 16 / 同期グループ方式。ファイルを置けば自動でビルド対象になる。pbxproj への手動登録は不要）
 - アプリターゲット: `mogumogu-trade`
-- 現在の実装: 初期状態に近く、`mogumogu-trade/ContentView.swift` と `mogumogu-trade/mogumogu_tradeApp.swift` がある
 
-現時点ではFirebase、SwiftDataモデル、画面遷移、Firestoreスキーマは未導入です。実装時は、既存コードにない仕様を推測で広げず、この文書のMVP方針とv1決定事項を基準にしてください。
+実装済みの主な機能:
+
+- クラス参加（クラスコード/出席番号/ニックネーム、UserDefaults保存、自動参加、Firestore でクラス存在確認）
+- トレード（選択式の出品・リアルタイム監視・条件一致での自動マッチング。Firestore + トランザクション）
+- アレルギー登録（教員入力、`AllergyChecker` の純粋判定ロジック）
+- 完食マイレージ（QR承認＋ポイント台帳 `pointLedger`。下記「完食マイレージ」「QR承認」「ポイントルール」節を参照）
+
+未実装・部分実装:
+
+- ブラインドオークション（画面・入札UIはあるが、Firestore連携・締切・落札・ポイント消費は未実装）
+- 先生モード（画面の骨組みのみ。教員PIN認証・管理操作・履歴は未実装）
+- アレルギー判定の実トレード統合（`AllergyChecker` はあるが、マッチング処理にはまだ組み込んでいない）
+- Firestore Security Rules、SwiftData
+
+実装時は、既存コードにない仕様を推測で広げず、この文書のMVP方針とv1決定事項を基準にしてください。本書とコードの実態が食い違う場合はコードを優先し、本書も合わせて更新してください。
 
 ## MVP方針
 
@@ -76,19 +89,21 @@ v1では最小限に留める範囲:
 - `TradeMatch`
 - `FoodItem`
 
-### 完食マイレージ
+### 完食マイレージ（実装済み）
 
 - 完食した生徒は、隣の席などのクラスメイトに空のトレイを確認してもらう。
-- 確認者の端末に承認用QRコードを表示し、完食した本人の端末で読み取る。
-- QR読み取りが完了したら完食ポイントを付与する。
+- **完食した本人の端末に承認用QRコードを表示し、確認者の端末で読み取る。**（当初案は逆向きだったが、書き込み主体を確認者にして自己承認をしにくくするため向きを反転した）
+- 確認者側の検証（クラス一致・自己承認禁止・5分有効期限）を通過したら、確認者の端末から完食ポイントを付与する。
 - ポイントは日を跨いで継続的に蓄積し、給食時間終了でリセットしない。
-- ポイント履歴は、ローカルデータとバックエンド同期の両方を前提に設計する。
+- ポイントは残高を直接持たず、Firestore の `classes/{classId}/pointLedger` に履歴として追記し、合計で残高を出す。
 
-将来の概念候補:
+実装の対応箇所:
 
-- `MileagePointLedger`
-- `MealCompletionCheck`
-- `QRCodeApproval`
+- 台帳モデル: `Models/PointLedger.swift`（`PointLedgerEntry` / `PointEntryType`）
+- 付与・残高購読: `Dependencies/MileageClient.swift`（`awardMealCompletion` / `observeBalance`）
+- QRトークン: `Models/QRPayload.swift`、生成・パース: `Dependencies/QRCodeClient.swift`
+- 画面・検証: `Features/QRCheck/`（検証は純粋関数 `QRCheckViewModel.validate`）
+- Firestore 設計と想定 Security Rules: `docs/firestore-pointLedger.md`
 
 ### ブラインドオークション
 
@@ -254,31 +269,32 @@ v1では、トレード、完食承認、オークション結果の表示に出
 - `12番 もぐ`
 - `出席番号 12 / もぐ`
 
-### QR承認
+### QR承認（実装済み）
 
-完食マイレージのQR承認は、v1では簡易承認として実装します。
+完食マイレージのQR承認は、簡易承認として実装済みです。
 
-- QRコードの有効期限は5分
+- **完食者がQRを表示し、確認者が読み取って加点する**（当初案から向きを反転。書き込み主体を確認者にする）
+- QRコードの有効期限は5分（`QRCheckViewModel.expirySeconds`）
 - 同じ生徒が同じ日に獲得できる完食ポイントは1回まで
-- 自分の端末に表示したQRを自分で読み取る自己承認は禁止
-- 承認者と完食者の出席番号をポイント履歴に残す
-- 通信失敗時は、同じ承認を重複付与しないようにする
+- 自分のQRを自分で読み取る自己承認は禁止（出席番号で判定）
+- 承認者（確認者）と完食者の出席番号をポイント台帳に残す
+- 「1日1回」と「通信失敗時の重複付与防止」は、台帳の決定論ドキュメントID `meal-{mealDate}-{eater}` ＋トランザクションで両立する
 
-厳密な不正検知や座席表との連動はv1では対象外です。
+厳密な不正検知や座席表との連動はv1では対象外です。Firebase Auth 導入後は `docs/firestore-pointLedger.md` の Security Rules を有効化する想定です。
 
 ### ポイントルール
 
 v1のポイントルールはシンプルに固定します。
 
-- 完食1回: 10ポイント付与
+- 完食1回: 1ポイント付与（当初は10ポイント案だったが、刻みを細かくして1ポイントに変更）
 - 1日の完食ポイント付与: 1回まで
-- ポイント残高の上限: 999ポイント
-- オークション入札: 現在の保有ポイント以下のみ
-- 落札者: 入札ポイントを消費
+- ポイント残高の上限: なし（当初の999上限は撤廃）
+- オークション入札: 現在の保有ポイント以下のみ（オークション本体は未実装）
+- 落札者: 入札ポイントを消費（未実装）
 - 非落札者: ポイント消費なし
-- 取り消し: 教員だけがポイント履歴に取り消し記録を追加できる
+- 取り消し: 教員だけがポイント台帳に取り消し記録（`teacherCancel`）を追加できる（未実装）
 
-ポイントは残高の直接上書きではなく、履歴の合計として扱う方針にしてください。
+ポイントは残高の直接上書きではなく、台帳（`pointLedger`）の合計として扱う。`Student.point` フィールドは残高には使わない（将来オークションのアトミックな消費が必要になった時点で、台帳追記と同一トランザクションで更新するキャッシュ残高を別途導入する）。
 
 ### Firestore構造とSecurity Rules
 
@@ -287,13 +303,13 @@ v1では、クラス単位でデータを分離する構造にします。
 想定コレクション:
 
 - `classes/{classId}`
-- `classes/{classId}/students/{studentId}`
-- `classes/{classId}/trades/{tradeId}`
-- `classes/{classId}/pointLedger/{ledgerId}`
-- `classes/{classId}/auctions/{auctionId}`
-- `classes/{classId}/auctions/{auctionId}/bids/{bidId}`
+- `classes/{classId}/students/{studentId}`（実装済み）
+- `classes/{classId}/trades/{tradeId}`（実装済み）
+- `classes/{classId}/pointLedger/{ledgerId}`（実装済み。完食は決定論ID `meal-{mealDate}-{eater}`。詳細は `docs/firestore-pointLedger.md`）
+- `classes/{classId}/auctions/{auctionId}`（未実装）
+- `classes/{classId}/auctions/{auctionId}/bids/{bidId}`（未実装）
 
-基本ルール:
+基本ルール（Security Rules はまだ未デプロイで、現状はクライアント側で検証）:
 
 - 生徒は、自分が参加しているクラスのデータだけ読める
 - 生徒は、自分の出品、入札、QR承認に必要なデータだけ書ける

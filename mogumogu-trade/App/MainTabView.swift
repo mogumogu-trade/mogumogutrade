@@ -28,7 +28,7 @@ struct MainTabView: View {
             }
 
             NavigationStack {
-                MileagePlaceholderView(profile: profile)
+                QRCheckView(profile: profile)
             }
             .tabItem {
                 Label("マイレージ", systemImage: "checkmark.seal.fill")
@@ -44,33 +44,6 @@ struct MainTabView: View {
         .task {
             await tradeViewModel.observeOffers()
         }
-    }
-}
-
-private struct MileagePlaceholderView: View {
-    let profile: StudentProfile
-
-    var body: some View {
-        ZStack {
-            Color(red: 0.95, green: 0.96, blue: 0.98)
-                .ignoresSafeArea()
-
-            VStack(spacing: 18) {
-                Image(systemName: "checkmark.seal.fill")
-                    .font(.system(size: 52))
-                    .foregroundStyle(Color(red: 0.47, green: 0.33, blue: 0.28))
-
-                Text("完食マイレージ")
-                    .font(.system(size: 26, weight: .black, design: .rounded))
-
-                Text("\(profile.studentNumber)番 \(profile.nickname)")
-                    .font(.system(size: 17, weight: .bold, design: .rounded))
-                    .foregroundStyle(.secondary)
-            }
-            .padding(24)
-        }
-        .navigationTitle("マイレージ")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
