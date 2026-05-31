@@ -9,7 +9,7 @@ struct ClassJoinView: View {
             ScrollView {
                 VStack(spacing: 24) {
                     header
-                    
+
                     inputCard(title: "クラスコード（4〜6けた）", hint: viewModel.classCodeHint) {
                         TextField("000000", text: Binding(
                             get: { viewModel.classCode },
@@ -19,7 +19,7 @@ struct ClassJoinView: View {
                         .font(.system(size: 28, weight: .black, design: .rounded))
                         .multilineTextAlignment(.center)
                     }
-                    
+
                     inputCard(title: "出席ばんごう", hint: viewModel.studentNumberHint) {
                         TextField("12", text: Binding(
                             get: { viewModel.studentNumberText },
@@ -29,7 +29,7 @@ struct ClassJoinView: View {
                         .font(.system(size: 28, weight: .black, design: .rounded))
                         .multilineTextAlignment(.center)
                     }
-                    
+
                     inputCard(title: "ニックネーム（1〜8もじ）", hint: viewModel.nicknameHint) {
                         TextField("もぐ", text: Binding(
                             get: { viewModel.nickname },
@@ -38,14 +38,14 @@ struct ClassJoinView: View {
                         .font(.system(size: 22, weight: .bold, design: .rounded))
                         .multilineTextAlignment(.center)
                     }
-                    
+
                     if let errorMessage = viewModel.errorMessage {
                         Text(errorMessage)
                             .font(.system(size: 14, weight: .bold))
                             .foregroundStyle(.red)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
-                    
+
                     submitButton
                     NavigationLink {
                         TeacherDashboardView()
@@ -70,6 +70,9 @@ struct ClassJoinView: View {
 
     private var header: some View {
         VStack(spacing: 8) {
+            Image(systemName: "fork.knife.circle.fill")
+                .font(.system(size: 54))
+                .foregroundStyle(AppColors.primary)
             Text("クラスに さんかしよう")
                 .font(.system(size: 26, weight: .black, design: .rounded))
             Text("せんせいから もらった コードを いれてね")
@@ -93,11 +96,11 @@ struct ClassJoinView: View {
             content()
                 .padding(.vertical, 10)
                 .padding(.horizontal, 12)
-                .background(Color.white)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .background(AppColors.card)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.black.opacity(0.08), lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(AppColors.primaryLight.opacity(0.55), lineWidth: 2)
                 )
             if let hint {
                 Text(hint)
@@ -121,9 +124,10 @@ struct ClassJoinView: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 16)
-            .background(viewModel.canSubmit ? Color(red: 0.18, green: 0.18, blue: 0.18) : Color.gray)
+            .background(viewModel.canSubmit ? AppColors.primary : Color.gray)
             .foregroundStyle(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .shadow(color: viewModel.canSubmit ? AppColors.primary.opacity(0.3) : .clear, radius: 8, x: 0, y: 4)
         }
         .disabled(!viewModel.canSubmit)
     }
