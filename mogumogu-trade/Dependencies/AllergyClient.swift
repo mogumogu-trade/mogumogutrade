@@ -1,12 +1,9 @@
 import Dependencies
 import DependenciesMacros
+import FirebaseFirestore
 import Foundation
 
 /// クラス内の生徒ごとのアレルギー登録情報を扱う Client。
-///
-/// v1（今回）はクライアント側ストア（UserDefaults に JSON 保存）。
-/// AGENTS.md の方針どおり、将来は Firestore `classes/{classId}/students/{studentId}.allergens`
-/// に置き換え、Security Rules でサーバ側検証を加える。
 @DependencyClient
 struct AllergyClient: Sendable {
     /// クラスの生徒名簿（アレルギー登録付き）を読み込む。
@@ -16,37 +13,14 @@ struct AllergyClient: Sendable {
 }
 
 extension AllergyClient: DependencyKey {
-    static let liveValue: AllergyClient = {
-        let defaults = UserDefaults.standard
-        func key(_ classId: String) -> String { "allergyRoster.\(classId)" }
-
-        func load(_ classId: String) -> [StudentAllergy] {
-            guard
-                let data = defaults.data(forKey: key(classId)),
-                let roster = try? JSONDecoder().decode([StudentAllergy].self, from: data)
-            else {
-                // 初回は仮の名簿を用意する（将来はクラス参加データ / Firestore から取得）。
-                return AllergyClient.seedRoster
-            }
-            return roster.sorted { $0.studentNumber < $1.studentNumber }
+    static let liveValue = AllergyClient(
+        loadRoster: { classId in
+            try await FirestoreAllergyService.loadRoster(classId: classId)
+        },
+        save: { classId, allergy in
+            try await FirestoreAllergyService.save(classId: classId, allergy: allergy)
         }
-
-        return AllergyClient(
-            loadRoster: { classId in
-                load(classId)
-            },
-            save: { classId, allergy in
-                var roster = load(classId)
-                if let index = roster.firstIndex(where: { $0.studentNumber == allergy.studentNumber }) {
-                    roster[index] = allergy
-                } else {
-                    roster.append(allergy)
-                }
-                let data = try JSONEncoder().encode(roster.sorted { $0.studentNumber < $1.studentNumber })
-                defaults.set(data, forKey: key(classId))
-            }
-        )
-    }()
+    )
 
     static let previewValue = AllergyClient(
         loadRoster: { _ in seedRoster },
@@ -66,5 +40,75 @@ extension DependencyValues {
     var allergyClient: AllergyClient {
         get { self[AllergyClient.self] }
         set { self[AllergyClient.self] = newValue }
+    }
+}
+
+private enum FirestoreAllergyService {
+    static func loadRoster(classId: String) async throws -> [StudentAllergy] {
+        let snapshot = try await studentsCollection(classId: classId)
+            .order(by: "studentNumber")
+            .getDocuments()
+
+        let roster = snapshot.documents.compactMap(studentAllergy(from:))
+        return roster.isEmpty ? AllergyClient.seedRoster : roster
+    }
+
+    static func save(classId: String, allergy: StudentAllergy) async throws {
+        let document = try await studentDocument(classId: classId, studentNumber: allergy.studentNumber)
+        let allergies = allergy.allergens
+            .map(\.rawValue)
+            .sorted()
+
+        try await document.setData(
+            [
+                "studentNumber": allergy.studentNumber,
+                "name": allergy.nickname,
+                "nickname": allergy.nickname,
+                "allergies": allergies,
+                "updatedAt": FieldValue.serverTimestamp(),
+            ],
+            merge: true
+        )
+    }
+
+    private static func studentsCollection(classId: String) -> CollectionReference {
+        Firestore.firestore()
+            .collection("classes")
+            .document(classId)
+            .collection("students")
+    }
+
+    private static func studentDocument(classId: String, studentNumber: Int) async throws -> DocumentReference {
+        let snapshot = try await studentsCollection(classId: classId)
+            .whereField("studentNumber", isEqualTo: studentNumber)
+            .limit(to: 1)
+            .getDocuments()
+
+        if let document = snapshot.documents.first {
+            return document.reference
+        }
+        return studentsCollection(classId: classId).document(String(studentNumber))
+    }
+
+    private static func studentAllergy(from document: QueryDocumentSnapshot) -> StudentAllergy? {
+        let data = document.data()
+        guard let studentNumber = data["studentNumber"] as? Int else { return nil }
+
+        let nickname = data["nickname"] as? String
+            ?? data["name"] as? String
+            ?? ""
+
+        let allergens = allergens(from: data["allergies"])
+
+        return StudentAllergy(
+            studentNumber: studentNumber,
+            nickname: nickname,
+            allergens: allergens
+        )
+    }
+
+    private static func allergens(from value: Any?) -> Set<Allergen> {
+        guard let values = value as? [String] else { return [] }
+        return Set(values.compactMap(Allergen.init(rawValue:)))
     }
 }

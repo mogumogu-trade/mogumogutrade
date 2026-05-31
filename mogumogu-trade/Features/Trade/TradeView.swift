@@ -8,7 +8,11 @@ struct TradeView: View {
             VStack(alignment: .leading, spacing: 18) {
                 studentCard
                 offerBuilder
-                resultBanner
+                TradeResultCard(
+                    message: viewModel.message,
+                    match: viewModel.match,
+                    onClose: viewModel.clearResult
+                )
             }
             .padding(24)
         }
@@ -78,8 +82,8 @@ struct TradeView: View {
             }
             .disabled(!viewModel.canSubmit || viewModel.isSubmitting)
 
-            if !viewModel.canSubmit {
-                Text("同じものどうしは選べないよ")
+            if let submitBlockReason = viewModel.submitBlockReason {
+                Text(submitBlockReason)
                     .font(.system(size: 13, weight: .bold))
                     .foregroundStyle(.red)
             }
@@ -99,39 +103,6 @@ struct TradeView: View {
         )
     }
 
-    @ViewBuilder
-    private var resultBanner: some View {
-        if let message = viewModel.message {
-            VStack(spacing: 12) {
-                Text(message)
-                    .font(.system(size: 26, weight: .black, design: .rounded))
-                    .multilineTextAlignment(.center)
-
-                if let match = viewModel.match {
-                    VStack(spacing: 6) {
-                        Text("\(match.partnerOffer.seller.displayName) と成立")
-                            .font(.system(size: 16, weight: .black, design: .rounded))
-                        Text("\(match.myOffer.offering.title) と \(match.partnerOffer.offering.title) を交換")
-                            .font(.system(size: 14, weight: .bold, design: .rounded))
-                    }
-                } else {
-                    Text(message == "出品を取り消したよ" ? "取り消しできたよ" : "出品リストに入ったよ")
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
-                        .foregroundStyle(.secondary)
-                }
-
-                Button("とじる") {
-                    viewModel.clearResult()
-                }
-                .font(.system(size: 14, weight: .bold, design: .rounded))
-                .buttonStyle(.bordered)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(18)
-            .background(viewModel.match == nil ? Color.yellow.opacity(0.32) : Color.green.opacity(0.32))
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-        }
-    }
 }
 
 private struct ConditionPickerCard: View {
@@ -178,6 +149,113 @@ private struct ConditionPickerCard: View {
     }
 }
 
+private struct TradeResultCard: View {
+    let message: String?
+    let match: TradeMatch?
+    let onClose: () -> Void
+
+    var body: some View {
+        if let message {
+            if let match {
+                matchResult(match)
+            } else {
+                simpleResult(message)
+            }
+        }
+    }
+
+    private func matchResult(_ match: TradeMatch) -> some View {
+        VStack(spacing: 16) {
+            Image(systemName: "checkmark.seal.fill")
+                .font(.system(size: 48, weight: .black))
+                .foregroundStyle(Color.green)
+
+            VStack(spacing: 6) {
+                Text("成立！")
+                    .font(.system(size: 38, weight: .black, design: .rounded))
+                    .multilineTextAlignment(.center)
+
+                Text("\(match.partnerOffer.seller.displayName) と交換できたよ")
+                    .font(.system(size: 17, weight: .black, design: .rounded))
+                    .multilineTextAlignment(.center)
+            }
+
+            HStack(spacing: 10) {
+                TradeResultItem(title: "わたす", condition: match.myOffer.offering, color: .blue)
+                Image(systemName: "arrow.left.arrow.right.circle.fill")
+                    .font(.system(size: 26, weight: .black))
+                    .foregroundStyle(Color.green)
+                TradeResultItem(title: "もらう", condition: match.partnerOffer.offering, color: .pink)
+            }
+
+            Button {
+                onClose()
+            } label: {
+                Label("わかった", systemImage: "checkmark.circle.fill")
+                    .font(.system(size: 16, weight: .black, design: .rounded))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(Color.green.opacity(0.18))
+                    .foregroundStyle(Color.green)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(20)
+        .background(Color.green.opacity(0.16))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.green.opacity(0.28), lineWidth: 1)
+        )
+    }
+
+    private func simpleResult(_ message: String) -> some View {
+        VStack(spacing: 12) {
+            Text(message)
+                .font(.system(size: 26, weight: .black, design: .rounded))
+                .multilineTextAlignment(.center)
+
+            Text(message == "出品を取り消したよ" ? "取り消しできたよ" : "出品リストに入ったよ")
+                .font(.system(size: 15, weight: .bold, design: .rounded))
+                .foregroundStyle(.secondary)
+
+            Button("とじる") {
+                onClose()
+            }
+            .font(.system(size: 14, weight: .bold, design: .rounded))
+            .buttonStyle(.bordered)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(18)
+        .background(Color.yellow.opacity(0.32))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+}
+
+private struct TradeResultItem: View {
+    let title: String
+    let condition: TradeCondition
+    let color: Color
+
+    var body: some View {
+        VStack(spacing: 5) {
+            Text(title)
+                .font(.system(size: 12, weight: .bold))
+                .foregroundStyle(.secondary)
+            Text(condition.title)
+                .font(.system(size: 17, weight: .black, design: .rounded))
+                .lineLimit(2)
+                .minimumScaleFactor(0.75)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity, minHeight: 72)
+        .padding(.horizontal, 8)
+        .background(color.opacity(0.14))
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+    }
+}
+
 struct TradeOffersView: View {
     let viewModel: TradeViewModel
 
@@ -187,6 +265,12 @@ struct TradeOffersView: View {
                 Text("みんなの出品")
                     .font(.system(size: 28, weight: .black, design: .rounded))
 
+                TradeResultCard(
+                    message: viewModel.message,
+                    match: viewModel.match,
+                    onClose: viewModel.clearResult
+                )
+
                 if viewModel.isLoading {
                     loadingState
                 } else if viewModel.openOffers.isEmpty {
@@ -194,11 +278,19 @@ struct TradeOffersView: View {
                 } else {
                     VStack(spacing: 14) {
                         ForEach(viewModel.openOffers) { offer in
+                            let isOwnOffer = viewModel.isOwnOffer(offer)
+                            let acceptBlockReason = isOwnOffer ? nil : viewModel.acceptBlockReason(for: offer)
                             TradeOfferRow(
                                 offer: offer,
-                                canCancel: offer.seller == viewModel.currentStudent,
+                                canCancel: isOwnOffer,
+                                canAccept: viewModel.canAccept(offer),
+                                acceptBlockReason: acceptBlockReason,
+                                isAccepting: viewModel.acceptingOfferId == offer.id,
                                 onCancel: {
                                     Task { await viewModel.cancelOffer(id: offer.id) }
+                                },
+                                onAccept: {
+                                    Task { await viewModel.acceptOffer(id: offer.id) }
                                 }
                             )
                         }
@@ -261,16 +353,28 @@ struct TradeOffersView: View {
 private struct TradeOfferRow: View {
     let offer: TradeOffer
     let canCancel: Bool
+    let canAccept: Bool
+    let acceptBlockReason: String?
+    let isAccepting: Bool
     let onCancel: () -> Void
+    let onAccept: () -> Void
 
     init(
         offer: TradeOffer,
         canCancel: Bool = false,
-        onCancel: @escaping () -> Void = {}
+        canAccept: Bool = false,
+        acceptBlockReason: String? = nil,
+        isAccepting: Bool = false,
+        onCancel: @escaping () -> Void = {},
+        onAccept: @escaping () -> Void = {}
     ) {
         self.offer = offer
         self.canCancel = canCancel
+        self.canAccept = canAccept
+        self.acceptBlockReason = acceptBlockReason
+        self.isAccepting = isAccepting
         self.onCancel = onCancel
+        self.onAccept = onAccept
     }
 
     var body: some View {
@@ -307,6 +411,34 @@ private struct TradeOfferRow: View {
                         .foregroundStyle(.red)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
+            } else if let acceptBlockReason {
+                Label(acceptBlockReason, systemImage: "exclamationmark.triangle.fill")
+                    .font(.system(size: 13, weight: .bold, design: .rounded))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(12)
+                    .background(Color.red.opacity(0.10))
+                    .foregroundStyle(.red)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+            } else {
+                Button {
+                    onAccept()
+                } label: {
+                    HStack {
+                        if isAccepting {
+                            ProgressView()
+                        } else {
+                            Image(systemName: "checkmark.circle.fill")
+                        }
+                        Text(isAccepting ? "交換しているよ…" : "この人と交換する")
+                    }
+                    .font(.system(size: 14, weight: .black, design: .rounded))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 10)
+                    .background(canAccept && !isAccepting ? Color.green.opacity(0.18) : Color.gray.opacity(0.14))
+                    .foregroundStyle(canAccept && !isAccepting ? .green : .secondary)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+                .disabled(!canAccept || isAccepting)
             }
         }
         .padding(16)
@@ -345,6 +477,40 @@ private struct ConditionPill: View {
     NavigationStack {
         TradeView(viewModel: TradeViewModel(
             profile: StudentProfile(classId: "123456", studentNumber: 12, nickname: "もぐ")
+        ))
+    }
+}
+
+#Preview("交換成立") {
+    NavigationStack {
+        TradeOffersView(viewModel: TradeViewModel(
+            profile: StudentProfile(classId: "123456", studentNumber: 12, nickname: "もぐ"),
+            offers: TradeViewModel.sampleOffers,
+            match: TradeMatch(
+                id: "preview-my-offer-preview-partner-offer",
+                myOffer: TradeOffer(
+                    id: "preview-my-offer",
+                    mealDate: "2026-05-31",
+                    seller: StudentSummary(attendanceNumber: 12, nickname: "もぐ"),
+                    offering: .tomato,
+                    requesting: .greenPepper,
+                    status: .matched,
+                    matchedOfferId: "preview-partner-offer",
+                    matchedAt: Date()
+                ),
+                partnerOffer: TradeOffer(
+                    id: "preview-partner-offer",
+                    mealDate: "2026-05-31",
+                    seller: StudentSummary(attendanceNumber: 8, nickname: "はる"),
+                    offering: .greenPepper,
+                    requesting: .tomato,
+                    status: .matched,
+                    matchedOfferId: "preview-my-offer",
+                    matchedAt: Date()
+                ),
+                matchedAt: Date()
+            ),
+            message: "トレード成立！"
         ))
     }
 }
