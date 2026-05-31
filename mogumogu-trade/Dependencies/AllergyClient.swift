@@ -50,7 +50,7 @@ private enum FirestoreAllergyService {
             .getDocuments()
 
         let roster = snapshot.documents.compactMap(studentAllergy(from:))
-        return roster.isEmpty ? AllergyClient.seedRoster : roster
+        return roster
     }
 
     static func save(classId: String, allergy: StudentAllergy) async throws {
