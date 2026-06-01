@@ -16,6 +16,11 @@ struct AuctionClient: Sendable {
         _ studentNumber: Int
     ) -> AsyncThrowingStream<AuctionBid?, Error>
 
+    var observeBids: @Sendable (
+        _ classId: String,
+        _ roomId: String
+    ) -> AsyncThrowingStream<[AuctionBid], Error>
+
     var observeResult: @Sendable (
         _ classId: String,
         _ roomId: String
@@ -78,6 +83,9 @@ extension AuctionClient: DependencyKey {
                 studentNumber: studentNumber
             )
         },
+        observeBids: { classId, roomId in
+            FirestoreAuctionService.observeBids(classId: classId, roomId: roomId)
+        },
         observeResult: { classId, roomId in
             FirestoreAuctionService.observeResult(classId: classId, roomId: roomId)
         },
@@ -114,6 +122,27 @@ extension AuctionClient: DependencyKey {
                 continuation.finish()
             }
         },
+        observeBids: { _, _ in
+            AsyncThrowingStream { continuation in
+                continuation.yield([
+                    AuctionBid(
+                        id: "student-12",
+                        student: StudentSummary(attendanceNumber: 12, nickname: "もぐ"),
+                        amount: 8,
+                        createdAt: Date(),
+                        updatedAt: Date()
+                    ),
+                    AuctionBid(
+                        id: "student-8",
+                        student: StudentSummary(attendanceNumber: 8, nickname: "はる"),
+                        amount: 6,
+                        createdAt: Date().addingTimeInterval(30),
+                        updatedAt: Date().addingTimeInterval(30)
+                    ),
+                ])
+                continuation.finish()
+            }
+        },
         observeResult: { _, _ in
             AsyncThrowingStream { continuation in
                 continuation.yield(nil)
@@ -130,13 +159,15 @@ extension AuctionClient: DependencyKey {
             )
         },
         createRoom: { _, itemName, mealDate in
-            AuctionRoom(
-                id: "preview-room",
-                itemName: itemName,
-                status: .open,
-                mealDate: mealDate,
-                createdAt: Date()
-            )
+            await MainActor.run {
+                AuctionRoom(
+                    id: "preview-room",
+                    itemName: itemName,
+                    status: .open,
+                    mealDate: mealDate,
+                    createdAt: Date()
+                )
+            }
         },
         closeRoom: { _, roomId in
             AuctionResult(id: "main", roomId: roomId, winner: nil, closedAt: Date())
@@ -198,6 +229,34 @@ private enum FirestoreAuctionService {
                         return
                     }
                     continuation.yield(try? bidDocument(id: snapshot.documentID, data: data))
+                }
+
+            continuation.onTermination = { _ in
+                listener.remove()
+            }
+        }
+    }
+
+    static func observeBids(
+        classId: String,
+        roomId: String
+    ) -> AsyncThrowingStream<[AuctionBid], Error> {
+        AsyncThrowingStream { continuation in
+            let listener = bidsCollection(classId: classId, roomId: roomId)
+                .addSnapshotListener { snapshot, error in
+                    if let error {
+                        continuation.finish(throwing: error)
+                        return
+                    }
+
+                    do {
+                        let bids = try snapshot?.documents
+                            .map { try bidDocument(id: $0.documentID, data: $0.data()) }
+                            .sorted(by: bidPriority) ?? []
+                        continuation.yield(bids)
+                    } catch {
+                        continuation.finish(throwing: error)
+                    }
                 }
 
             continuation.onTermination = { _ in
@@ -527,12 +586,14 @@ private enum FirestoreAuctionService {
         let snapshot = try await bidsCollection(classId: classId, roomId: roomId).getDocuments()
         return try snapshot.documents
             .map { try bidDocument(id: $0.documentID, data: $0.data()) }
-            .sorted {
-                if $0.amount == $1.amount {
-                    return $0.createdAt < $1.createdAt
-                }
-                return $0.amount > $1.amount
-            }
+            .sorted(by: bidPriority)
+    }
+
+    private static func bidPriority(_ lhs: AuctionBid, _ rhs: AuctionBid) -> Bool {
+        if lhs.amount == rhs.amount {
+            return lhs.createdAt < rhs.createdAt
+        }
+        return lhs.amount > rhs.amount
     }
 
     private static func auctionCollection(classId: String) -> CollectionReference {
