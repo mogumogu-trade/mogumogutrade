@@ -25,6 +25,11 @@ struct MileageClient: Sendable {
         _ classId: String,
         _ studentNumber: Int
     ) -> AsyncThrowingStream<Int, Error>
+
+    /// クラス全員分の残高（台帳の合計）を出席番号ごとにまとめて取得する。
+    var fetchClassBalances: @Sendable (
+        _ classId: String
+    ) async throws -> [Int: Int]
 }
 
 enum MileageAwardResult: Sendable, Equatable {
@@ -66,6 +71,9 @@ extension MileageClient: DependencyKey {
         },
         observeBalance: { classId, studentNumber in
             FirestoreMileageService.observeBalance(classId: classId, studentNumber: studentNumber)
+        },
+        fetchClassBalances: { classId in
+            try await FirestoreMileageService.fetchClassBalances(classId: classId)
         }
     )
 
@@ -76,7 +84,8 @@ extension MileageClient: DependencyKey {
                 continuation.yield(0)
                 continuation.finish()
             }
-        }
+        },
+        fetchClassBalances: { _ in [:] }
     )
 }
 
@@ -188,6 +197,17 @@ private enum FirestoreMileageService {
             )
             .getDocument()
         return FirestorePointBalanceStore.balance(from: snapshot)
+    }
+
+    static func fetchClassBalances(classId: String) async throws -> [Int: Int] {
+        let snapshot = try await ledgerCollection(classId: classId, firestore: Firestore.firestore())
+            .getDocuments()
+        var balances: [Int: Int] = [:]
+        for document in snapshot.documents {
+            guard let studentNumber = document.data()["studentNumber"] as? Int else { continue }
+            balances[studentNumber, default: 0] += (document.data()["amount"] as? Int) ?? 0
+        }
+        return balances
     }
 
     private static func total(of documents: [QueryDocumentSnapshot]) -> Int {
